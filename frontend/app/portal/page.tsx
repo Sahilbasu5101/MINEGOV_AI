@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Fingerprint } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider'; // Aapka existing ThemeProvider
 
 const ORG_DATA = {
-  cil: ['Coal India Limited (CIL)', 'Singareni Collieries (SCCL)'],
+  cil: ['Coal India Limited (CIL)'],
   subsidiaries: {
     'Coal India Limited (CIL)': [
       'Eastern Coalfields Limited (ECL)',
@@ -27,7 +28,6 @@ const ROLES = [
   { id: 'field', title: 'Field Inspector', sub: 'FIELD-OPS' },
   { id: 'env', title: 'Environment Officer', sub: 'ENV-MONITOR' },
   { id: 'prod', title: 'Production Officer', sub: 'OPS-MGMT' },
-  { id: 'welfare', title: 'Welfare Officer', sub: 'HR-OFFICER' },
   { id: 'safety', title: 'Safety Inspector', sub: 'SAFETY-AUDIT' },
   { id: 'manager', title: 'Mine Manager', sub: 'SITE-DIRECTOR' },
 ];
@@ -42,13 +42,46 @@ export default function PortalPage() {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedMine, setSelectedMine] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
 
   const isDark = theme === 'dark';
+  const mineSelected = Boolean(selectedMine);
+  const organizationSelected = Boolean(selectedCil || selectedSub || selectedRegion);
+  const authenticationEnabled = mineSelected ? Boolean(selectedRole) : organizationSelected;
 
   const handleMineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
     setSelectedMine(val);
-    if (val) setStep(2);
+    setSelectedRole('');
+    setBiometricEnabled(false);
+    setStep(val ? 2 : 1);
+  };
+
+  const handleCilChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCil(e.target.value);
+    setSelectedSub('');
+    setSelectedRegion('');
+    setSelectedMine('');
+    setSelectedRole('');
+    setBiometricEnabled(false);
+    setStep(1);
+  };
+
+  const handleSubsidiaryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSub(e.target.value);
+    setSelectedRegion('');
+    setSelectedMine('');
+    setSelectedRole('');
+    setBiometricEnabled(false);
+    setStep(1);
+  };
+
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedRegion(e.target.value);
+    setSelectedMine('');
+    setSelectedRole('');
+    setBiometricEnabled(false);
+    setStep(1);
   };
 
   return (
@@ -112,7 +145,7 @@ export default function PortalPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <select
                 value={selectedCil}
-                onChange={(e) => { setSelectedCil(e.target.value); setSelectedSub(''); setSelectedRegion(''); setSelectedMine(''); }}
+                onChange={handleCilChange}
                 className={`text-xs p-2.5 rounded border outline-none ${isDark
                     ? 'bg-slate-950 border-slate-800 text-slate-300 focus:border-amber-500'
                     : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500'
@@ -125,7 +158,7 @@ export default function PortalPage() {
               <select
                 disabled={!selectedCil}
                 value={selectedSub}
-                onChange={(e) => { setSelectedSub(e.target.value); setSelectedRegion(''); setSelectedMine(''); }}
+                onChange={handleSubsidiaryChange}
                 className={`text-xs p-2.5 rounded border outline-none disabled:opacity-40 ${isDark
                     ? 'bg-slate-950 border-slate-800 text-slate-300 focus:border-amber-500'
                     : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500'
@@ -140,7 +173,7 @@ export default function PortalPage() {
               <select
                 disabled={!selectedSub}
                 value={selectedRegion}
-                onChange={(e) => { setSelectedRegion(e.target.value); setSelectedMine(''); }}
+                onChange={handleRegionChange}
                 className={`text-xs p-2.5 rounded border outline-none disabled:opacity-40 ${isDark
                     ? 'bg-slate-950 border-slate-800 text-slate-300 focus:border-amber-500'
                     : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500'
@@ -170,12 +203,12 @@ export default function PortalPage() {
           </div>
 
           {/* STEP 2: Select Your Role */}
-          <div className={`p-5 rounded-lg border transition ${step >= 2
+          <div className={`p-5 rounded-lg border transition ${mineSelected && step >= 2
               ? isDark ? 'border-amber-500/40 bg-slate-900/60' : 'border-amber-500/50 bg-white shadow-sm'
               : 'opacity-50 pointer-events-none ' + (isDark ? 'border-slate-800 bg-slate-900/20' : 'border-slate-200 bg-slate-100')
             }`}>
             <div className="flex items-center gap-3 mb-4">
-              <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${step >= 2 ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-300'}`}>2</span>
+              <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${mineSelected && step >= 2 ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-300'}`}>2</span>
               <div>
                 <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Select Your Role</h3>
                 <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Choose your role based on operational authorization.</p>
@@ -200,33 +233,63 @@ export default function PortalPage() {
           </div>
 
           {/* STEP 3: Authenticate */}
-          <div className={`p-5 rounded-lg border transition ${step === 3
+          <div className={`p-5 rounded-lg border transition ${authenticationEnabled
               ? isDark ? 'border-amber-500/40 bg-slate-900/60' : 'border-amber-500/50 bg-white shadow-sm'
               : 'opacity-50 pointer-events-none ' + (isDark ? 'border-slate-800 bg-slate-900/20' : 'border-slate-200 bg-slate-100')
             }`}>
             <div className="flex items-center gap-3 mb-4">
-              <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${step === 3 ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-300'}`}>3</span>
+              <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${authenticationEnabled ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-300'}`}>3</span>
               <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Authenticate</h3>
             </div>
+
+            <p className={`text-xs mb-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              {mineSelected
+                ? 'Enter your credentials after selecting an authorized mine role.'
+                : 'Enter your credentials to continue with the selected organization.'}
+            </p>
 
             <form onSubmit={(e) => { e.preventDefault(); alert("Access Granted!"); }} className="space-y-3 max-w-md">
               <input
                 type="text"
-                placeholder="Government ID / Email"
+                placeholder="Unique ID"
+                disabled={!authenticationEnabled}
                 className={`w-full text-xs p-2 rounded border outline-none ${isDark ? 'bg-slate-950 border-slate-800 text-slate-300 focus:border-amber-500' : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500'
                   }`}
                 required
               />
               <input
                 type="password"
-                placeholder="Enter Security PIN"
+                placeholder="Password"
+                disabled={!authenticationEnabled}
                 className={`w-full text-xs p-2 rounded border outline-none ${isDark ? 'bg-slate-950 border-slate-800 text-slate-300 focus:border-amber-500' : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-amber-500'
                   }`}
                 required
               />
+              <label className={`flex items-center gap-2 text-xs cursor-pointer ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                <input
+                  type="checkbox"
+                  checked={biometricEnabled}
+                  onChange={(e) => setBiometricEnabled(e.target.checked)}
+                  disabled={!authenticationEnabled}
+                  className="h-3.5 w-3.5 accent-amber-500"
+                />
+                <span>Use optional biometric authentication</span>
+              </label>
+              {biometricEnabled && (
+                <button
+                  type="button"
+                  disabled={!authenticationEnabled}
+                  onClick={() => alert('Biometric authentication requested.')}
+                  className="w-full flex items-center justify-center gap-2 border border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/10 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-xs py-2 rounded transition"
+                >
+                  <Fingerprint className="w-4 h-4" />
+                  Continue with Biometrics
+                </button>
+              )}
               <button
                 type="submit"
-                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs py-2 rounded transition"
+                disabled={!authenticationEnabled}
+                className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-slate-500 disabled:cursor-not-allowed text-black disabled:text-slate-300 font-semibold text-xs py-2 rounded transition"
               >
                 Sign In →
               </button>
