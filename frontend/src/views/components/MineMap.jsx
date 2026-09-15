@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import L from "leaflet";
 import {
   Circle,
@@ -45,6 +45,21 @@ function RecenterControl({ coordinates }) {
   );
 }
 
+function MapResizeHandler() {
+  const map = useMap();
+  useEffect(() => {
+    const timer1 = setTimeout(() => map.invalidateSize(), 100);
+    const timer2 = setTimeout(() => map.invalidateSize(), 500);
+    const timer3 = setTimeout(() => map.invalidateSize(), 1200);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [map]);
+  return null;
+}
+
 export function MineMap() {
   const location = useGeolocation();
   const hasLocation = Boolean(location.coordinates);
@@ -58,6 +73,7 @@ export function MineMap() {
         scrollWheelZoom
         className="mine-map"
       >
+        <MapResizeHandler />
         {viewMode === "street" ? (
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

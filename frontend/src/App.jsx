@@ -4,12 +4,16 @@ import { LandingPage } from "./views/LandingPage";
 import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
+import MineManagerDashboard from "./pages/MineManager/MineManagerDashboard";
 import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
 
 function App() {
   // Read initial route from location hash
   const getInitialView = () => {
     const hash = window.location.hash;
+    if (hash === "#demo_mine_manager") {
+      return { view: "mineManager", hash };
+    }
     if (hash === "#demo_regional_area") {
       return { view: "regional_dashboard", hash };
     }
@@ -24,7 +28,11 @@ function App() {
     ) {
       return { view: "regulatory", hash };
     }
-    if (hash === "#/login" || hash === "#/access-gateway" || hash === "#access-gateway") {
+    if (
+      hash === "#/login" ||
+      hash === "#/access-gateway" ||
+      hash === "#access-gateway"
+    ) {
       return { view: "gateway", hash };
     }
     return { view: "home", hash: "" };
@@ -36,7 +44,9 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === "#demo_regional_area") {
+      if (hash === "#demo_mine_manager") {
+        setRouteState({ view: "mineManager", hash });
+      } else if (hash === "#demo_regional_area") {
         setRouteState({ view: "regional_dashboard", hash });
       } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
@@ -118,6 +128,10 @@ function App() {
         onBackToHome={handleBackToHome}
       />
     );
+  }
+
+  if (routeState.view === "mineManager") {
+    return <MineManagerDashboard />;
   }
 
   if (routeState.view === "regulatory") {
