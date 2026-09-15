@@ -5,6 +5,7 @@ import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
 import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
+import CilDashboard from "./pages/cil-dashboard/cil";
 
 function App() {
   // Read initial route from location hash
@@ -12,6 +13,9 @@ function App() {
     const hash = window.location.hash;
     if (hash === "#demo_regional_area") {
       return { view: "regional_dashboard", hash };
+    }
+    if (hash === "#cil-dashboard" || hash === "#demo_cil" || hash === "#/cil-dashboard") {
+      return { view: "cil_dashboard", hash };
     }
     if (hash.startsWith("#demo_")) {
       return { view: "dashboard", hash };
@@ -38,6 +42,8 @@ function App() {
       const hash = window.location.hash;
       if (hash === "#demo_regional_area") {
         setRouteState({ view: "regional_dashboard", hash });
+      } else if (hash === "#cil-dashboard" || hash === "#demo_cil" || hash === "#/cil-dashboard") {
+        setRouteState({ view: "cil_dashboard", hash });
       } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
       } else if (
@@ -95,6 +101,8 @@ function App() {
     window.location.hash = redirectHash;
     if (redirectHash === "#demo_regional_area") {
       setRouteState({ view: "regional_dashboard", hash: redirectHash });
+    } else if (redirectHash === "#cil-dashboard" || redirectHash === "#demo_cil" || redirectHash === "#/cil-dashboard") {
+      setRouteState({ view: "cil_dashboard", hash: redirectHash });
     } else {
       setRouteState({ view: "dashboard", hash: redirectHash });
     }
@@ -104,6 +112,16 @@ function App() {
   if (routeState.view === "regional_dashboard") {
     return (
       <RegionalDashboard
+        onBackToGateway={handleBackToGateway}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
+
+  if (routeState.view === "cil_dashboard") {
+    return (
+      <CilDashboard
+        onNavigateGateway={handleBackToGateway}
         onBackToGateway={handleBackToGateway}
         onBackToHome={handleBackToHome}
       />
