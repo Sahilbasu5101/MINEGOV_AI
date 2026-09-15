@@ -74,7 +74,7 @@ export const ORG_TIERS = {
     subtitle: "Coal India Limited Headquarters",
     icon: Building2,
     defaultEmail: "cil.apex@nic.in",
-    redirectHash: "#demo_cil",
+    redirectHash: "#cil-dashboard",
     levelTag: "Apex Level 0 • New Delhi / Kolkata HQ",
     scopeDescription: "All Subsidiaries & 280+ Mining Blocks",
   },

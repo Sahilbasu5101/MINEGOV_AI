@@ -4,8 +4,10 @@ import { LandingPage } from "./views/LandingPage";
 import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
+import MineManagerDashboard from "./pages/MineManager/MineManagerDashboard";
 import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
 import { SubsidiaryDashboard } from "./pages/Subsidary-dashboard";
+import CilDashboard from "./pages/cil-dashboard/cil";
 
 function App() {
   // Read initial route from location hash
@@ -14,8 +16,14 @@ function App() {
     if (hash === "#demo_subsidiary" || hash === "#subsidiary_dashboard") {
       return { view: "subsidiary_dashboard", hash };
     }
+    if (hash === "#demo_mine_manager") {
+      return { view: "mineManager", hash };
+    }
     if (hash === "#demo_regional_area") {
       return { view: "regional_dashboard", hash };
+    }
+    if (hash === "#cil-dashboard" || hash === "#demo_cil" || hash === "#/cil-dashboard") {
+      return { view: "cil_dashboard", hash };
     }
     if (hash.startsWith("#demo_")) {
       return { view: "dashboard", hash };
@@ -28,7 +36,11 @@ function App() {
     ) {
       return { view: "regulatory", hash };
     }
-    if (hash === "#/login" || hash === "#/access-gateway" || hash === "#access-gateway") {
+    if (
+      hash === "#/login" ||
+      hash === "#/access-gateway" ||
+      hash === "#access-gateway"
+    ) {
       return { view: "gateway", hash };
     }
     return { view: "home", hash: "" };
@@ -42,8 +54,12 @@ function App() {
       const hash = window.location.hash;
       if (hash === "#demo_subsidiary" || hash === "#subsidiary_dashboard") {
         setRouteState({ view: "subsidiary_dashboard", hash });
+      } else if (hash === "#demo_mine_manager") {
+        setRouteState({ view: "mineManager", hash });
       } else if (hash === "#demo_regional_area") {
         setRouteState({ view: "regional_dashboard", hash });
+      } else if (hash === "#cil-dashboard" || hash === "#demo_cil" || hash === "#/cil-dashboard") {
+        setRouteState({ view: "cil_dashboard", hash });
       } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
       } else if (
@@ -103,6 +119,8 @@ function App() {
       setRouteState({ view: "subsidiary_dashboard", hash: redirectHash });
     } else if (redirectHash === "#demo_regional_area") {
       setRouteState({ view: "regional_dashboard", hash: redirectHash });
+    } else if (redirectHash === "#cil-dashboard" || redirectHash === "#demo_cil" || redirectHash === "#/cil-dashboard") {
+      setRouteState({ view: "cil_dashboard", hash: redirectHash });
     } else {
       setRouteState({ view: "dashboard", hash: redirectHash });
     }
@@ -127,6 +145,16 @@ function App() {
     );
   }
 
+  if (routeState.view === "cil_dashboard") {
+    return (
+      <CilDashboard
+        onNavigateGateway={handleBackToGateway}
+        onBackToGateway={handleBackToGateway}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
+
   if (routeState.view === "dashboard") {
     return (
       <DemoDashboard
@@ -135,6 +163,10 @@ function App() {
         onBackToHome={handleBackToHome}
       />
     );
+  }
+
+  if (routeState.view === "mineManager") {
+    return <MineManagerDashboard />;
   }
 
   if (routeState.view === "regulatory") {
