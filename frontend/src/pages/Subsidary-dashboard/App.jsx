@@ -1,0 +1,1 @@
+export { SubsidiaryDashboard as default, SubsidiaryDashboard } from "./SubsidiaryDashboard";
