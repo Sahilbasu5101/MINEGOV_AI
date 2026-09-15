@@ -5,6 +5,7 @@ import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
 import MineManagerDashboard from "./pages/MineManager/MineManagerDashboard";
+import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
 
 function App() {
   // Read initial route from location hash
@@ -12,6 +13,9 @@ function App() {
     const hash = window.location.hash;
     if (hash === "#demo_mine_manager") {
       return { view: "mineManager", hash };
+    }
+    if (hash === "#demo_regional_area") {
+      return { view: "regional_dashboard", hash };
     }
     if (hash.startsWith("#demo_")) {
       return { view: "dashboard", hash };
@@ -42,6 +46,8 @@ function App() {
       const hash = window.location.hash;
       if (hash === "#demo_mine_manager") {
         setRouteState({ view: "mineManager", hash });
+      } else if (hash === "#demo_regional_area") {
+        setRouteState({ view: "regional_dashboard", hash });
       } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
       } else if (
@@ -97,9 +103,22 @@ function App() {
 
   const handleNavigateToDashboard = (redirectHash) => {
     window.location.hash = redirectHash;
-    setRouteState({ view: "dashboard", hash: redirectHash });
+    if (redirectHash === "#demo_regional_area") {
+      setRouteState({ view: "regional_dashboard", hash: redirectHash });
+    } else {
+      setRouteState({ view: "dashboard", hash: redirectHash });
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (routeState.view === "regional_dashboard") {
+    return (
+      <RegionalDashboard
+        onBackToGateway={handleBackToGateway}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
 
   if (routeState.view === "dashboard") {
     return (
