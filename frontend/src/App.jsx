@@ -4,11 +4,15 @@ import { LandingPage } from "./views/LandingPage";
 import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
+import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
 
 function App() {
   // Read initial route from location hash
   const getInitialView = () => {
     const hash = window.location.hash;
+    if (hash === "#demo_regional_area") {
+      return { view: "regional_dashboard", hash };
+    }
     if (hash.startsWith("#demo_")) {
       return { view: "dashboard", hash };
     }
@@ -32,7 +36,9 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.startsWith("#demo_")) {
+      if (hash === "#demo_regional_area") {
+        setRouteState({ view: "regional_dashboard", hash });
+      } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
       } else if (
         hash === "#/regulatory-access" ||
@@ -87,9 +93,22 @@ function App() {
 
   const handleNavigateToDashboard = (redirectHash) => {
     window.location.hash = redirectHash;
-    setRouteState({ view: "dashboard", hash: redirectHash });
+    if (redirectHash === "#demo_regional_area") {
+      setRouteState({ view: "regional_dashboard", hash: redirectHash });
+    } else {
+      setRouteState({ view: "dashboard", hash: redirectHash });
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (routeState.view === "regional_dashboard") {
+    return (
+      <RegionalDashboard
+        onBackToGateway={handleBackToGateway}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
 
   if (routeState.view === "dashboard") {
     return (
