@@ -4,11 +4,15 @@ import { LandingPage } from "./views/LandingPage";
 import { AccessGateway } from "./views/AccessGateway";
 import { RegulatoryGateway } from "./views/RegulatoryGateway";
 import { DemoDashboard } from "./views/DemoDashboard";
+import MineManagerDashboard from "./pages/MineManager/MineManagerDashboard";
 
 function App() {
   // Read initial route from location hash
   const getInitialView = () => {
     const hash = window.location.hash;
+    if (hash === "#demo_mine_manager") {
+      return { view: "mineManager", hash };
+    }
     if (hash.startsWith("#demo_")) {
       return { view: "dashboard", hash };
     }
@@ -20,7 +24,11 @@ function App() {
     ) {
       return { view: "regulatory", hash };
     }
-    if (hash === "#/login" || hash === "#/access-gateway" || hash === "#access-gateway") {
+    if (
+      hash === "#/login" ||
+      hash === "#/access-gateway" ||
+      hash === "#access-gateway"
+    ) {
       return { view: "gateway", hash };
     }
     return { view: "home", hash: "" };
@@ -32,7 +40,9 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.startsWith("#demo_")) {
+      if (hash === "#demo_mine_manager") {
+        setRouteState({ view: "mineManager", hash });
+      } else if (hash.startsWith("#demo_")) {
         setRouteState({ view: "dashboard", hash });
       } else if (
         hash === "#/regulatory-access" ||
@@ -99,6 +109,10 @@ function App() {
         onBackToHome={handleBackToHome}
       />
     );
+  }
+
+  if (routeState.view === "mineManager") {
+    return <MineManagerDashboard />;
   }
 
   if (routeState.view === "regulatory") {
