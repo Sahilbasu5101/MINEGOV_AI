@@ -35,7 +35,7 @@ import {
   Wind,
   ArrowLeft
 } from 'lucide-react';
-import Chart from 'chart.js/auto';
+
 
 export default function CilDashboard({ onNavigateGateway, onBackToGateway, onBackToHome }) {
   // Theme state: initialized cleanly with local storage and system fallback
