@@ -189,7 +189,7 @@ export function ReportsView({ onShowToast, onOpenSection }) {
                 <div className="mm-doc-thumb">
                   <div className="mm-doc-header">
                     <Icon name="shield" size={18} />
-                    <span>MineGuard Safety Incident Report</span>
+                    <span>MineGov AI Safety Incident Report</span>
                   </div>
                   <div className="mm-doc-lines">
                     <div className="mm-line-lg" />

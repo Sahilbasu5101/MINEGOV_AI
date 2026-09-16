@@ -236,7 +236,7 @@ function Sidebar({ active, onSelect }) {
       <div className="mm-brand">
         <BrandLogo size={36} />
         <div>
-          <p className="mm-brand-name">MineGuard</p>
+          <p className="mm-brand-name">MineGov AI</p>
           <p className="mm-brand-tag">Safer Mines. Smarter Tomorrow.</p>
         </div>
       </div>
