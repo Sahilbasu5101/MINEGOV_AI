@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
 import {
   LayoutDashboard,
   ShieldAlert,
@@ -381,7 +382,7 @@ export default function CilDashboard({ onNavigateGateway, onBackToGateway, onBac
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition cursor-pointer ${
                     active
                       ? 'bg-blue-600 text-white font-bold shadow-sm'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                      : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <div className="flex items-center">
@@ -1203,7 +1204,7 @@ export default function CilDashboard({ onNavigateGateway, onBackToGateway, onBac
                           className={`px-2 py-1 rounded text-[10px] font-bold transition cursor-pointer ${
                             activeTwinLayer === lyr.id
                               ? 'bg-purple-600 text-white shadow-xs'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                              : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                           }`}
                         >
                           {lyr.label}
