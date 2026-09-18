@@ -1,0 +1,6 @@
+import { createContext, useContext, useEffect, useState, type PropsWithChildren } from 'react';
+import { authService } from '../services/auth-service'; import { sessionStorage } from '../storage/session-storage'; import type { AuthSession } from '../types/auth';
+type AuthContextValue = { session: AuthSession | null; ready: boolean; signIn(id: string, pin: string): Promise<AuthSession>; signOut(): Promise<void> };
+const AuthContext = createContext<AuthContextValue | null>(null);
+export function AuthProvider({ children }: PropsWithChildren) { const [session, setSession] = useState<AuthSession | null>(null); const [ready, setReady] = useState(false); useEffect(() => { sessionStorage.load().then(setSession).finally(() => setReady(true)); }, []); return <AuthContext.Provider value={{ session, ready, async signIn(id, pin) { const next = await authService.signIn(id, pin); await sessionStorage.save(next); setSession(next); return next; }, async signOut() { await sessionStorage.clear(); setSession(null); } }}>{children}</AuthContext.Provider>; }
+export function useAuth() { const value = useContext(AuthContext); if (!value) throw new Error('useAuth must be used within AuthProvider'); return value; }
