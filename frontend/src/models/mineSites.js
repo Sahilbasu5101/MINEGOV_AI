@@ -1,19 +1,19 @@
 export const mineSites = [
   {
+    id: 'singrauli',
+    name: 'Singrauli Coalfields (NCL)',
+    region: 'Madhya Pradesh',
+    coordinates: [24.1526335, 82.6580253],
+    status: 'Live monitoring',
+    leases: 86,
+  },
+  {
     id: 'gevra-secl',
     name: 'Gevra Coal Mines (SECL)',
     region: 'Chhattisgarh',
     coordinates: [22.3381638, 82.5459976],
-    status: 'Live monitoring',
-    leases: 42,
-  },
-  {
-    id: 'singrauli',
-    name: 'Singrauli Coalfields',
-    region: 'Madhya Pradesh',
-    coordinates: [24.1997, 82.675],
     status: 'Operational',
-    leases: 86,
+    leases: 42,
   },
   {
     id: 'korba',
@@ -34,4 +34,4 @@ export const mineSites = [
 ]
 
 export const indiaCenter = [22.7, 81.2]
-export const mineCenter = [22.3381638, 82.5459976]
+export const mineCenter = [24.1526335, 82.6580253]

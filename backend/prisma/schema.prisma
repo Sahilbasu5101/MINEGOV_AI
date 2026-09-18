@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ----------------------------------------------------
+// 1. Auth & Multi-Tier RBAC Module
+// ----------------------------------------------------
+enum UserRole {
+  CHAIRMAN_CIL
+  DIRECTOR_TECH
+  DIRECTOR_ENV
+  SUBSIDIARY_CMD
+  AREA_GM
+  MINE_MANAGER
+  DGMS_INSPECTOR
+  CPCB_OFFICER
+  IBM_REGULATOR
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String
+  fullName      String
+  apexId        String?      @unique
+  role          UserRole
+  subsidiaryId  String?
+  areaId        String?
+  collieryId    String?
+  subsidiary    Subsidiary?  @relation(fields: [subsidiaryId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([role])
+}
+
+// ----------------------------------------------------
+// 2. Mine Hierarchy & Geo Service
+// ----------------------------------------------------
+model Subsidiary {
+  id            String                @id @default(uuid())
+  code          String                @unique // ECL, BCCL, CCL, WCL, SECL, MCL, NCL, CMPDIL
+  name          String
+  headquarters  String
+  state         String
+  areas         RegionalArea[]
+  users         User[]
+  afforestation AfforestationRecord[]
+  createdAt     DateTime              @default(now())
+}
+
+model RegionalArea {
+  id           String     @id @default(uuid())
+  name         String
+  subsidiaryId String
+  subsidiary   Subsidiary @relation(fields: [subsidiaryId], references: [id], onDelete: Cascade)
+  collieries   Colliery[]
+  createdAt    DateTime   @default(now())
+}
+
+model Colliery {
+  id               String            @id @default(uuid())
+  name             String
+  areaId           String
+  area             RegionalArea      @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  latitude         Float?
+  longitude        Float?
+  type             String            // OPENCAST, UNDERGROUND, MIXED
+  pits             Pit[]
+  sensorReadings   SensorReading[]
+  safetyNotices    SafetyNotice[]
+  ocemsReadings    OcemsReading[]
+  workers          WorkerRecord[]
+  boardEscalations BoardEscalation[]
+  createdAt        DateTime          @default(now())
+}
+
+model Pit {
+  id         String   @id @default(uuid())
+  name       String
+  collieryId String
+  colliery   Colliery @relation(fields: [collieryId], references: [id], onDelete: Cascade)
+  status     String   @default("ACTIVE")
+}
+
+// ----------------------------------------------------
+// 3. Real-Time SCADA & Telemetry Ingestion
+// ----------------------------------------------------
+enum SensorType {
+  CH4
+  CO
+  AIR_VELOCITY
+  ROOF_CONVERGENCE
+  PM10
+  PH
+  NOISE
+}
+
+enum AlertLevel {
+  NORMAL
+  WATCH
+  CRITICAL
+}
+
+model SensorReading {
+  id         String     @id @default(uuid())
+  collieryId String
+  colliery   Colliery   @relation(fields: [collieryId], references: [id], onDelete: Cascade)
+  sensorType SensorType
+  value      Float
+  unit       String
+  status     AlertLevel @default(NORMAL)
+  recordedAt DateTime   @default(now())
+
+  @@index([collieryId, sensorType, recordedAt])
+}
+
+// ----------------------------------------------------
+// 4. DGMS Statutory & Section 22 Safety Desk
+// ----------------------------------------------------
+model SafetyNotice {
+  id              String     @id @default(uuid())
+  noticeId        String     @unique // e.g. SEC22-2026-001
+  collieryId      String
+  colliery        Colliery   @relation(fields: [collieryId], references: [id])
+  regulation      String     // CMR 153, CMR 123, etc.
+  parameter       String
+  severity        AlertLevel
+  statutoryAction String
+  status          String     @default("ACTIVE") // ACTIVE, EXECUTED, RESOLVED
+  signedBy        String?
+  hsmSignature    String?    // SHA-256 Cryptographic audit signature
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+// ----------------------------------------------------
+// 5. CPCB OCEMS & Bio-Reclamation Service
+// ----------------------------------------------------
+model OcemsReading {
+  id                String   @id @default(uuid())
+  collieryId        String
+  colliery          Colliery @relation(fields: [collieryId], references: [id])
+  parameter         String   // PM10, PM25, SO2, NOX, EFFLUENT_PH
+  value             Float
+  statutoryLimit    Float
+  thresholdBreached Boolean  @default(false)
+  recordedAt        DateTime @default(now())
+
+  @@index([collieryId, recordedAt])
+}
+
+model AfforestationRecord {
+  id            String     @id @default(uuid())
+  subsidiaryId  String
+  subsidiary    Subsidiary @relation(fields: [subsidiaryId], references: [id])
+  fiscalYear    String     // "2025-26"
+  targetHa      Float
+  achievedHa    Float
+  canopyDensity Float
+}
+
+// ----------------------------------------------------
+// 6. Workforce Health PME & MVTR Gatepass Lockout
+// ----------------------------------------------------
+enum PmeStatus {
+  FIT
+  RE_EXAM
+  DUST_WATCH
+  UNFIT
+}
+
+model WorkerRecord {
+  id                  String    @id @default(uuid())
+  workerId            String    @unique
+  collieryId          String
+  colliery            Colliery  @relation(fields: [collieryId], references: [id])
+  name                String
+  designation         String
+  pmeStatus           PmeStatus @default(FIT)
+  pmeDueDate          DateTime
+  mvtrRefresherDate   DateTime
+  biometricGateLocked Boolean   @default(false)
+}
+
+// ----------------------------------------------------
+// 7. Board Directives & HSM Audit Ledger
+// ----------------------------------------------------
+model BoardEscalation {
+  id               String     @id @default(uuid())
+  escalationId     String     @unique
+  collieryId       String
+  colliery         Colliery   @relation(fields: [collieryId], references: [id])
+  matter           String
+  assignedDirector String
+  directive        String
+  status           String     @default("PENDING")
+  severity         AlertLevel
+  createdAt        DateTime   @default(now())
+}
+
+model AuditLedgerEntry {
+  id           String   @id @default(uuid())
+  entityType   String
+  entityId     String
+  actionType   String
+  actorId      String
+  previousHash String
+  currentHash  String   // SHA-256(previousHash + entityId + actionType + actorId + timestamp)
+  timestamp    DateTime @default(now())
+
+  @@index([timestamp])
+}

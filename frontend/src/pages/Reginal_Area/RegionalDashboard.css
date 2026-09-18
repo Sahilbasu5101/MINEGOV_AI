@@ -1,16 +1,17 @@
 /* ==========================================================================
-   REGIONAL AREA DASHBOARD - MODERN ENTERPRISE LIGHT THEME
-   Design System: #1E3A8A Primary, #F8FAFC App Bg, #FFFFFF Card Bg
+   REGIONAL AREA DASHBOARD - MODERN CIL APEX MATCHED THEME
+   Design System: #2563eb Primary, #f1f5f9 / #070B13 App Bg, #ffffff / #0D1424 Card Bg
    ========================================================================== */
 
 .regional-dashboard-root {
   display: flex;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
   color: #0f172a;
   font-family:
     -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 /* ==========================================================================
@@ -27,6 +28,7 @@
   top: 0;
   height: 100vh;
   z-index: 40;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 .reg-sidebar-brand {
@@ -34,17 +36,19 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .brand-icon-box {
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #2563eb;
+  border: 1px solid #1d4ed8;
   display: grid;
   place-items: center;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+  color: #ffffff;
 }
 
 .brand-text-col {
@@ -53,9 +57,9 @@
 }
 
 .brand-main {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  color: #1e3a8a;
+  color: #0f172a;
   letter-spacing: -0.3px;
 }
 
@@ -63,7 +67,8 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.8px;
-  color: #64748b;
+  color: #2563eb;
+  text-transform: uppercase;
 }
 
 .sidebar-session-card {
@@ -142,9 +147,14 @@
 }
 
 .reg-nav-item.active {
-  background: #eff6ff;
-  color: #1e3a8a;
-  font-weight: 600;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+}
+
+.reg-nav-item.active svg {
+  color: #ffffff !important;
 }
 
 .nav-pill-badge {
@@ -302,9 +312,9 @@
 .cluster-tag {
   font-size: 11px;
   font-weight: 700;
-  color: #1e3a8a;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.25);
   padding: 2px 8px;
   border-radius: 4px;
   letter-spacing: 0.3px;
@@ -461,7 +471,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #1e3a8a;
+  background: #2563eb;
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -868,7 +878,8 @@
 
 .filter-btn.active {
   background: #ffffff;
-  color: #1e3a8a;
+  color: #2563eb;
+  font-weight: 700;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
@@ -1418,7 +1429,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: #1e3a8a;
+  background: #2563eb;
   color: #ffffff;
   border: none;
   font-size: 12.5px;
@@ -1430,7 +1441,7 @@
 }
 
 .action-button-primary:hover {
-  background: #1e40af;
+  background: #1d4ed8;
 }
 
 .action-button-subtle {
@@ -1501,186 +1512,514 @@
   }
 }
 
-/* Regional dashboard dark theme, scoped to avoid changing other views. */
+/* ==========================================================================
+   REGIONAL AREA DASHBOARD - CIL APEX MATCHED DARK THEME
+   Palette:
+   - Root Background: #070B13
+   - Sidebar, Header, Sub-header: #0B111E
+   - Cards, KPI Cards, Analytics, AI Card: #0D1424
+   - Hairline Borders: #1E293B
+   - Table Header: #0F172A
+   - Primary Accent: #2563eb (CIL Blue) / #38bdf8 (Cyan)
+   ========================================================================== */
+
 .regional-dashboard-root.dark-theme {
-  background: #0f172a;
-  color: #e2e8f0;
+  background-color: #070B13;
+  color: #f1f5f9;
 }
 
+/* 1. Sidebar, Header & Structural Bars */
 .dark-theme .reg-sidebar,
 .dark-theme .reg-header,
-.dark-theme .reg-title-bar,
-.dark-theme .card-white,
-.dark-theme .kpi-card,
-.dark-theme .user-profile-pill,
-.dark-theme .watch-active-btn,
-.dark-theme .view-colliery-btn {
-  background: #172033;
-  border-color: #2b3a52;
+.dark-theme .reg-title-bar {
+  background-color: #0B111E;
+  border-color: #1E293B;
 }
 
 .dark-theme .reg-sidebar-brand,
-.dark-theme .reg-sidebar-footer,
-.dark-theme .reg-header,
-.dark-theme .reg-title-bar {
-  border-color: #2b3a52;
+.dark-theme .reg-sidebar-footer {
+  border-color: #1E293B;
 }
 
-.dark-theme .brand-icon-box,
-.dark-theme .sidebar-session-card,
-.dark-theme .header-search-wrap input,
+/* Brand Area */
+.dark-theme .brand-icon-box {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.45);
+}
+
+.dark-theme .brand-main {
+  color: #ffffff;
+}
+
+.dark-theme .brand-badge {
+  color: #38bdf8;
+}
+
+/* User Session Info */
+.dark-theme .sidebar-session-card {
+  background: #0D1424;
+  border-color: #1E293B;
+}
+
+.dark-theme .session-info strong {
+  color: #f8fafc;
+}
+
+.dark-theme .session-info span {
+  color: #64748b;
+}
+
+/* Navigation Items (Matches CIL Dashboard Sidebar) */
+.dark-theme .reg-nav-item {
+  color: #94a3b8;
+  background: transparent;
+}
+
+.dark-theme .reg-nav-item:hover {
+  background: rgba(30, 41, 59, 0.6);
+  color: #ffffff;
+}
+
+.dark-theme .reg-nav-item.active {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
+}
+
+.dark-theme .reg-nav-item.active svg {
+  color: #ffffff !important;
+}
+
+.dark-theme .nav-group-label {
+  color: #64748b;
+}
+
+.dark-theme .switch-gateway-btn {
+  background: #0D1424;
+  border-color: #1E293B;
+  color: #cbd5e1;
+}
+
+.dark-theme .switch-gateway-btn:hover {
+  background: #1E293B;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* 2. Top Header & Title Bar */
+.dark-theme .crumb-root,
+.dark-theme .crumb-mid {
+  color: #64748b;
+}
+
+.dark-theme .crumb-root:hover,
+.dark-theme .crumb-mid:hover {
+  color: #38bdf8;
+}
+
+.dark-theme .crumb-curr {
+  color: #f8fafc;
+}
+
+.dark-theme .crumb-sep {
+  color: #334155;
+}
+
+.dark-theme .header-cluster-badge {
+  border-color: #1E293B;
+}
+
+.dark-theme .cluster-tag {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+.dark-theme .cluster-sub {
+  color: #64748b;
+}
+
+.dark-theme .header-search-wrap input {
+  background: #0D1424;
+  border-color: #1E293B;
+  color: #f8fafc;
+}
+
+.dark-theme .header-search-wrap input:focus {
+  background: #131C2E;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+.dark-theme .header-search-wrap input::placeholder {
+  color: #475569;
+}
+
 .dark-theme .refresh-pill,
 .dark-theme .theme-toggle-btn,
 .dark-theme .icon-bell-btn,
-.dark-theme .portal-home-link,
-.dark-theme .action-button-subtle,
-.dark-theme .row-action-btn {
-  background: #1e293b;
-  border-color: #334155;
-  color: #cbd5e1;
-}
-
-.dark-theme .sidebar-session-card,
-.dark-theme .risk-item-row {
-  background: #1e293b;
-}
-.dark-theme .reg-nav-item {
-  color: #cbd5e1;
-}
-.dark-theme .reg-nav-item:hover {
-  background: #243247;
-  color: #f8fafc;
-}
-.dark-theme .reg-nav-item.active {
-  background: #1e3a5f;
-  color: #93c5fd;
-}
-.dark-theme .brand-main,
-.dark-theme .cluster-tag {
-  color: #93c5fd;
-}
-.dark-theme .brand-icon-box,
-.dark-theme .cluster-tag {
-  background: #172f50;
-  border-color: #28527d;
-}
-.dark-theme .brand-badge,
-.dark-theme .session-info span,
-.dark-theme .nav-group-label,
-.dark-theme .system-telemetry-badge,
-.dark-theme .crumb-root,
-.dark-theme .crumb-mid,
-.dark-theme .cluster-sub,
-.dark-theme .screen-main-sub,
-.dark-theme .card-subtitle,
-.dark-theme .kpi-label,
-.dark-theme .kpi-footer,
-.dark-theme .colliery-type,
-.dark-theme .risk-hazard-desc,
-.dark-theme .user-role,
-.dark-theme .chart-legend,
-.dark-theme .chart-x-axis {
+.dark-theme .portal-home-link {
+  background: #0D1424;
+  border-color: #1E293B;
   color: #94a3b8;
 }
-.dark-theme .session-info strong,
-.dark-theme .crumb-curr,
-.dark-theme .screen-main-title,
-.dark-theme .card-title,
-.dark-theme .colliery-title,
-.dark-theme .risk-mine-name,
-.dark-theme .live-pill,
-.dark-theme .user-name,
-.dark-theme .task-name {
-  color: #f1f5f9;
-}
-.dark-theme .crumb-sep {
-  color: #475569;
-}
-.dark-theme .header-cluster-badge {
-  border-color: #2b3a52;
-}
-.dark-theme .header-search-wrap input {
-  color: #f1f5f9;
-}
-.dark-theme .header-search-wrap input:focus {
-  background: #243247;
-}
-.dark-theme .header-search-wrap input::placeholder {
-  color: #64748b;
-}
+
 .dark-theme .refresh-pill:hover,
 .dark-theme .theme-toggle-btn:hover,
 .dark-theme .icon-bell-btn:hover,
-.dark-theme .portal-home-link:hover,
-.dark-theme .view-colliery-btn:hover,
-.dark-theme .action-button-subtle:hover,
-.dark-theme .row-action-btn:hover {
-  background: #243247;
-  color: #bfdbfe;
+.dark-theme .portal-home-link:hover {
+  background: #1E293B;
+  border-color: #3b82f6;
+  color: #ffffff;
 }
+
 .dark-theme .theme-toggle-btn {
-  color: #fbbf24;
+  color: #f59e0b;
 }
-.dark-theme .filter-pill-group,
-.dark-theme .reg-table th,
-.dark-theme .risk-item-row {
-  background: #1e293b;
+
+.dark-theme .user-profile-pill {
+  background: #0D1424;
+  border-color: #1E293B;
 }
+
+.dark-theme .user-profile-pill:hover {
+  border-color: #3b82f6;
+}
+
+.dark-theme .user-name {
+  color: #f8fafc;
+}
+
+.dark-theme .user-role {
+  color: #64748b;
+}
+
+.dark-theme .screen-main-title {
+  color: #ffffff;
+}
+
+.dark-theme .screen-main-sub {
+  color: #94a3b8;
+}
+
+/* 3. Cards & Surfaces (Matches CIL #0D1424 elevation) */
+.dark-theme .card-white,
+.dark-theme .kpi-card,
+.dark-theme .colliery-matrix-card,
+.dark-theme .graph-card,
+.dark-theme .ai-anomaly-card {
+  background-color: #0D1424;
+  border-color: #1E293B;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .card-white:hover,
+.dark-theme .kpi-card:hover {
+  border-color: #334155;
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.6);
+}
+
+.dark-theme .card-title {
+  color: #ffffff;
+}
+
+.dark-theme .card-subtitle {
+  color: #94a3b8;
+}
+
+/* KPI Cards */
+.dark-theme .kpi-card {
+  border-left: 3px solid #2563eb;
+}
+
+.dark-theme .kpi-card:nth-child(1) { border-left-color: #10b981; }
+.dark-theme .kpi-card:nth-child(2) { border-left-color: #ef4444; }
+.dark-theme .kpi-card:nth-child(3) { border-left-color: #2563eb; }
+.dark-theme .kpi-card:nth-child(4) { border-left-color: #06b6d4; }
+.dark-theme .kpi-card:nth-child(5) { border-left-color: #f59e0b; }
+.dark-theme .kpi-card:nth-child(6) { border-left-color: #a855f7; }
+
+.dark-theme .kpi-label {
+  color: #94a3b8;
+}
+
+.dark-theme .kpi-number {
+  color: #ffffff;
+}
+
+.dark-theme .kpi-number small {
+  color: #64748b;
+}
+
+.dark-theme .kpi-footer {
+  color: #64748b;
+}
+
+.dark-theme .chip-teal {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.dark-theme .chip-blue {
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+.dark-theme .chip-red {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Critical Notice Banner (High-contrast CIL styling) */
+.dark-theme .critical-notice-banner {
+  background: rgba(136, 19, 55, 0.25);
+  border: 1px solid rgba(225, 29, 72, 0.45);
+  border-left: 4px solid #f43f5e;
+}
+
+.dark-theme .notice-left strong {
+  color: #fda4af;
+}
+
+.dark-theme .notice-left p {
+  color: #fecdd3;
+}
+
+.dark-theme .critical-icon-pill {
+  background: #e11d48;
+  color: #ffffff;
+}
+
+.dark-theme .watch-active-btn {
+  background: #e11d48;
+  border: none;
+  color: #ffffff;
+}
+
+.dark-theme .watch-active-btn:hover {
+  background: #be123c;
+}
+
+/* Domain Buttons */
+.dark-theme .domain-button {
+  background: #0D1424;
+  border-color: #1E293B;
+  color: #94a3b8;
+}
+
+.dark-theme .domain-button:hover {
+  background: #131C2E;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.dark-theme .domain-button.active {
+  background: rgba(37, 99, 235, 0.18);
+  border-color: #2563eb;
+  color: #60a5fa;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+/* 4. Tables (CIL Crisp Data Aesthetic) */
+.dark-theme .filter-pill-group {
+  background: #0F172A;
+  border: 1px solid #1E293B;
+}
+
 .dark-theme .filter-btn {
   color: #94a3b8;
 }
+
 .dark-theme .filter-btn.active {
-  background: #334155;
-  color: #bfdbfe;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
 }
-.dark-theme .reg-table th,
+
+.dark-theme .live-pill {
+  color: #f8fafc;
+}
+
+.dark-theme .reg-table th {
+  background: #0F172A;
+  color: #94a3b8;
+  border-top-color: #1E293B;
+  border-bottom-color: #1E293B;
+}
+
 .dark-theme .reg-table td {
-  border-color: #2b3a52;
+  border-bottom-color: #1E293B;
+  color: #cbd5e1;
 }
+
 .dark-theme .reg-table tbody tr:hover {
-  background: #1e293b;
+  background: rgba(30, 41, 59, 0.45);
 }
+
 .dark-theme .reg-table tr.row-critical {
-  background: #3a2028;
+  background: rgba(225, 29, 72, 0.08);
+  border-left: 3px solid #ef4444;
 }
-.dark-theme .critical-notice-banner {
-  background: #3a2028;
-  border-color: #7f1d1d;
+
+.dark-theme .colliery-title {
+  color: #ffffff;
+  font-weight: 700;
 }
-.dark-theme .notice-left strong {
-  color: #fca5a5;
+
+.dark-theme .colliery-type {
+  color: #64748b;
 }
-.dark-theme .notice-left p {
-  color: #fecaca;
+
+.dark-theme .row-action-btn {
+  background: #0F172A;
+  border-color: #1E293B;
+  color: #60a5fa;
 }
-.dark-theme .critical-icon-pill {
-  background: #5b2026;
+
+.dark-theme .row-action-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
 }
-.dark-theme .watch-active-btn {
-  color: #fca5a5;
-  border-color: #9f1239;
-}
-.dark-theme .watch-active-btn:hover {
-  background: #5b2026;
-}
+
 .dark-theme .directive-bar {
-  background: #3b202b;
-  border-color: #881337;
+  background: rgba(136, 19, 55, 0.2);
+  border-color: rgba(225, 29, 72, 0.4);
+  border-left: 4px solid #f43f5e;
 }
+
+.dark-theme .directive-label {
+  color: #fda4af;
+}
+
+.dark-theme .directive-text {
+  color: #fecdd3;
+}
+
+.dark-theme .directive-btn {
+  background: #e11d48;
+  border: none;
+}
+
+.dark-theme .directive-btn:hover {
+  background: #be123c;
+}
+
+/* Status Badges */
+.dark-theme .badge-healthy {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.dark-theme .badge-watch {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.dark-theme .badge-critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.dark-theme .badge-normal {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* 5. Right Analytics, AI Card & Charts */
+.dark-theme .chart-legend {
+  color: #94a3b8;
+}
+
+.dark-theme .chart-x-axis {
+  color: #64748b;
+}
+
+.dark-theme .ai-anomaly-card {
+  border-left: 4px solid #8b5cf6;
+}
+
+.dark-theme .ai-title {
+  color: #a78bfa;
+}
+
+.dark-theme .ai-conf-chip {
+  background: rgba(139, 92, 246, 0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
 .dark-theme .ai-anomaly-body {
   color: #cbd5e1;
 }
-.dark-theme .task-name {
-  color: #cbd5e1;
+
+.dark-theme .ai-action-link {
+  color: #a78bfa;
 }
-.dark-theme .domain-button {
-  background: #1e293b;
+
+/* 6. Lower Workflow */
+.dark-theme .risk-item-row {
+  background: #0F172A;
+  border-color: #1E293B;
+}
+
+.dark-theme .risk-mine-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.dark-theme .risk-hazard-desc {
+  color: #94a3b8;
+}
+
+.dark-theme .view-colliery-btn {
+  background: #1E293B;
   border-color: #334155;
+  color: #60a5fa;
+}
+
+.dark-theme .view-colliery-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.dark-theme .view-all-link {
+  color: #38bdf8;
+}
+
+.dark-theme .task-name {
+  color: #f1f5f9;
+}
+
+/* 7. Action Buttons */
+.dark-theme .action-button-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.dark-theme .action-button-primary:hover {
+  background: #1d4ed8;
+}
+
+.dark-theme .action-button-subtle {
+  background: #0F172A;
+  border-color: #1E293B;
   color: #cbd5e1;
 }
-.dark-theme .domain-button:hover,
-.dark-theme .domain-button.active {
-  background: #1e3a5f;
+
+.dark-theme .action-button-subtle:hover {
+  background: #1E293B;
   border-color: #3b82f6;
-  color: #bfdbfe;
+  color: #ffffff;
 }
