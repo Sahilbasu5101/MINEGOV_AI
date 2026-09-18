@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Activity,
   AlertOctagon,
@@ -210,8 +210,31 @@ export function RegionalDashboard({ onBackToGateway, onBackToHome }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [isSyncing, setIsSyncing] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("minegov_theme");
+      if (stored !== null) return stored === "dark";
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return true;
+  });
   const [selectedDomain, setSelectedDomain] = useState(null);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const root = document.documentElement;
+      const body = document.body;
+      if (isDarkTheme) {
+        root.classList.add("dark");
+        if (body) body.classList.add("dark");
+        localStorage.setItem("minegov_theme", "dark");
+      } else {
+        root.classList.remove("dark");
+        if (body) body.classList.remove("dark");
+        localStorage.setItem("minegov_theme", "light");
+      }
+    }
+  }, [isDarkTheme]);
 
   const currentScreen = SCREENS_CONFIG[activeTab] || SCREENS_CONFIG.overview;
 
@@ -230,17 +253,17 @@ export function RegionalDashboard({ onBackToGateway, onBackToHome }) {
 
   return (
     <div
-      className={`regional-dashboard-root ${isDarkTheme ? "dark-theme" : ""}`}
+      className={`regional-dashboard-root ${isDarkTheme ? "dark-theme dark" : ""}`}
     >
       {/* 1. LEFT SIDEBAR */}
       <aside className="reg-sidebar">
         {/* Brand Area */}
         <div className="reg-sidebar-brand">
           <div className="brand-icon-box">
-            <Shield className="text-blue-700" size={22} />
+            <Shield className="text-white" size={20} />
           </div>
           <div className="brand-text-col">
-            <span className="brand-main">MineGov AI</span>
+            <span className="brand-main">MINEGOV AI</span>
             <span className="brand-badge">REGIONAL HQ • KATRAS</span>
           </div>
         </div>
@@ -429,7 +452,7 @@ export function RegionalDashboard({ onBackToGateway, onBackToHome }) {
         <div className="reg-title-bar">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+              <span className="text-xs font-mono font-bold text-blue-600 dark:text-cyan-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-500/30">
                 {currentScreen.screenNum}
               </span>
               <h1 className="screen-main-title">{currentScreen.title}</h1>
@@ -437,11 +460,11 @@ export function RegionalDashboard({ onBackToGateway, onBackToHome }) {
             <p className="screen-main-sub">{currentScreen.subtitle}</p>
           </div>
           <div className="hidden lg:flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
               GM Session: Eastern Cluster
             </span>
-            <span className="text-slate-300">•</span>
-            <span className="text-xs font-mono text-emerald-700 bg-emerald-50 px-2 py-1 rounded font-bold">
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-1 rounded font-bold border border-emerald-200 dark:border-emerald-800/40">
               ● Live Sync: 15-Min Ingestion Active
             </span>
           </div>

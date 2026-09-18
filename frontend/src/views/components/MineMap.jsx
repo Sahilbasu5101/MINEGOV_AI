@@ -69,7 +69,7 @@ export function MineMap() {
     <div className="map-frame">
       <MapContainer
         center={mineCenter}
-        zoom={15}
+        zoom={14}
         scrollWheelZoom
         className="mine-map"
       >
