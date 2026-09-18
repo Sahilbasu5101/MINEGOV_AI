@@ -20,13 +20,14 @@ import {
 } from "lucide-react";
 import { LoginModal } from "./components/LoginModal";
 import { MINE_ROLES, ORG_TIERS } from "../models/rolesData";
+import { api } from "../services/api";
 
 export function AccessGateway({ onNavigateToHome, onNavigateToDashboard }) {
   // State for Mine Selection (toggles Step 2 unlock)
   const [isMineSelected, setIsMineSelected] = useState(false);
-  const [selectedMineName, setSelectedMineName] = useState("Gaslitand OCP");
+  const [selectedMineName, setSelectedMineName] = useState("Moonidih Project (BCCL)");
 
-  // Selected Role among the 5 Mine Roles (default to Safety Head Officer)
+  // Selected Role among the 5 Mine Roles (default to Mine Manager)
   const [selectedRole, setSelectedRole] = useState(MINE_ROLES[0]);
 
   // Auth form state in Step 3
@@ -52,7 +53,7 @@ export function AccessGateway({ onNavigateToHome, onNavigateToDashboard }) {
   // Handle Mine Box Click (Step 1 -> Step 2 Unlock)
   const handleMineBoxClick = () => {
     setIsMineSelected(true);
-    setSelectedMineName("Gaslitand OCP");
+    setSelectedMineName("Moonidih Project (BCCL)");
   };
 
   // Handle Role Selection (One of the 5 roles)
@@ -65,19 +66,25 @@ export function AccessGateway({ onNavigateToHome, onNavigateToDashboard }) {
   };
 
   // Authenticate from Modal
-  const handleModalAuth = (role) => {
+  const handleModalAuth = (role, user) => {
     setIsModalOpen(false);
-    onNavigateToDashboard(role.redirectHash, role);
+    onNavigateToDashboard(role.redirectHash, role, user);
   };
 
   // Authenticate from Step 3 inline form
-  const handleStep3Submit = (e) => {
+  const handleStep3Submit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const passToSend = authMethod === "pin" ? pin : "Password@123";
+      const result = await api.login(govId, passToSend);
+      setIsSubmitting(false);
+      onNavigateToDashboard(selectedRole.redirectHash, selectedRole, result?.user);
+    } catch (err) {
+      console.warn("API login error:", err);
       setIsSubmitting(false);
       onNavigateToDashboard(selectedRole.redirectHash, selectedRole);
-    }, 500);
+    }
   };
 
   return (

@@ -5,18 +5,25 @@ import { Server as SocketIOServer } from "socket.io";
 import cors from "cors";
 import { prisma } from "./config/db.js";
 
+// Import Module Routers
+import authRouter from "./modules/auth/auth.routes.js";
+import cilRouter from "./modules/cil/cil.routes.js";
+import regionalRouter from "./modules/regional/regional.routes.js";
+import minesRouter from "./modules/mines/mines.routes.js";
+import uploadRouter from "./modules/upload/upload.routes.js";
+
 const app = express();
 const server = http.createServer(app);
 
 const port = process.env.PORT || 5000;
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
-// Middleware
+// Core Middleware
 app.use(cors({ origin: clientUrl, credentials: true }));
 app.use(express.json());
 
 // Setup Socket.io for Real-Time SCADA Telemetry
-const io = new SocketIOServer(server, {
+export const io = new SocketIOServer(server, {
   cors: {
     origin: clientUrl,
     methods: ["GET", "POST"],
@@ -37,7 +44,7 @@ io.on("connection", (socket) => {
 });
 
 // Periodic SCADA live heartbeat simulation (every 10 seconds)
-setInterval(async () => {
+setInterval(() => {
   try {
     const ch4Variation = +(0.5 + Math.random() * 0.4).toFixed(2);
     io.emit("telemetry:live", {
@@ -48,9 +55,16 @@ setInterval(async () => {
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
-    // Ignore heartbeat errors
+    // Ignore ticker errors
   }
 }, 10000);
+
+// API Routes Mounting
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/cil", cilRouter);
+app.use("/api/v1/regional", regionalRouter);
+app.use("/api/v1/mines", minesRouter);
+app.use("/api/v1/upload", uploadRouter);
 
 // Health check endpoint (verifies Neon Postgres connection)
 app.get("/api/health", async (_req: Request, res: Response) => {

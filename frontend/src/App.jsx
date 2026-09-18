@@ -119,6 +119,8 @@ function App() {
       setRouteState({ view: "subsidiary_dashboard", hash: redirectHash });
     } else if (redirectHash === "#demo_regional_area") {
       setRouteState({ view: "regional_dashboard", hash: redirectHash });
+    } else if (redirectHash === "#demo_mine_manager") {
+      setRouteState({ view: "mineManager", hash: redirectHash });
     } else if (redirectHash === "#cil-dashboard" || redirectHash === "#demo_cil" || redirectHash === "#/cil-dashboard") {
       setRouteState({ view: "cil_dashboard", hash: redirectHash });
     } else {

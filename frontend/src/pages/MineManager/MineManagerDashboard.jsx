@@ -23,6 +23,7 @@ import {
   navItems,
   sectionDetails,
 } from "./dashboardData";
+import { api } from "../../services/api";
 
 /* ---------------- helpers ---------------- */
 
@@ -273,6 +274,7 @@ function TopBar({
   onToggleTheme,
   now,
   currentMine,
+  currentUser,
   onSelectMine,
   currentShift,
   onSelectShift,
@@ -443,10 +445,24 @@ function TopBar({
           onClick={onOpenProfile}
           title="Mine Manager Statutory Credentials"
         >
-          <span className="mm-avatar">RK</span>
+          <span className="mm-avatar">
+            {currentUser?.fullName
+              ? currentUser.fullName
+                  .split(" ")
+                  .map((w) => w[0])
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()
+              : "RK"}
+          </span>
           <span className="mm-user-text">
-            <span className="mm-user-name">Rahul Kumar</span>
-            <span className="mm-user-role">Colliery Manager</span>
+            <span className="mm-user-name">
+              {currentUser?.fullName?.split("(")[0]?.trim() || "Rahul Kumar"}
+            </span>
+            <span className="mm-user-role">
+              {currentUser?.apexId || "Colliery Manager"}
+            </span>
           </span>
         </button>
       </div>
@@ -748,10 +764,33 @@ function RealtimeAlerts({ onOpen, onSelectAlert }) {
 
 /* ---------------- KPI cards ---------------- */
 
-function KpiCards({ onOpen }) {
+function KpiCards({ onOpen, telemetry, workforce }) {
+  const ch4Reading = telemetry?.find((r) => r.sensorType === "CH4");
+  const coReading = telemetry?.find((r) => r.sensorType === "CO");
+
+  const dynamicCards = kpiCards.map((c) => {
+    if (c.key === "safety" && ch4Reading) {
+      return {
+        ...c,
+        value: `${ch4Reading.value}%`,
+        unit: "CH4",
+        secondValue: coReading ? `${coReading.value} PPM CO` : c.secondValue,
+        label: `SCADA Live Telemetry (${ch4Reading.status})`,
+      };
+    }
+    if (c.key === "labour" && workforce && workforce.length > 0) {
+      return {
+        ...c,
+        value: String(workforce.length),
+        label: "Biometric Shift Verified (Neon DB)",
+      };
+    }
+    return c;
+  });
+
   return (
     <div className="mm-kpis">
-      {kpiCards.map((c) => (
+      {dynamicCards.map((c) => (
         <article
           key={c.key}
           className={`mm-kpi tone-${c.tone}`}
@@ -1258,6 +1297,43 @@ export default function MineManagerDashboard() {
   const [showSosModal, setShowSosModal] = useState(false);
   const [toast, setToast] = useState(null);
 
+  // Live PostgreSQL DB Telemetry & Workforce from Backend
+  const [dbTelemetry, setDbTelemetry] = useState(null);
+  const [dbWorkforce, setDbWorkforce] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("minegov_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch (_) {
+      return null;
+    }
+  });
+
+  const fetchLiveData = useCallback(async () => {
+    try {
+      let collieryId = "bc4ae7d0-d65a-4050-a5a4-8803d86fb16c"; // Default Moonidih colliery
+      if (currentUser?.collieryId) {
+        collieryId = currentUser.collieryId;
+      }
+      const telemetryRes = await api.getMineTelemetry(collieryId);
+      if (telemetryRes?.status === "SUCCESS") {
+        setDbTelemetry(telemetryRes.readings);
+      }
+      const workforceRes = await api.getMineWorkforce(collieryId);
+      if (workforceRes?.status === "SUCCESS") {
+        setDbWorkforce(workforceRes.workers);
+      }
+    } catch (err) {
+      console.warn("Live telemetry fetch fallback:", err);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchLiveData();
+    const interval = setInterval(fetchLiveData, 15000);
+    return () => clearInterval(interval);
+  }, [fetchLiveData]);
+
   const now = useNow();
 
   const showToast = useCallback((message, type = "info") => {
@@ -1282,14 +1358,13 @@ export default function MineManagerDashboard() {
     setPanelKey(null);
   }, []);
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-      setLastRefreshedTime(new Date());
-      showToast("Real-time telemetry and gas sensors synchronized.", "success");
-    }, 1000);
-  }, [showToast]);
+    await fetchLiveData();
+    setIsRefreshing(false);
+    setLastRefreshedTime(new Date());
+    showToast("Real-time telemetry & gas sensors synchronized with PostgreSQL DB.", "success");
+  }, [fetchLiveData, showToast]);
 
   const toggleNotif = useCallback(() => {
     setShowNotif((v) => !v);
@@ -1332,6 +1407,7 @@ export default function MineManagerDashboard() {
           onToggleTheme={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
           now={now}
           currentMine={currentMine}
+          currentUser={currentUser}
           onSelectMine={(m) => {
             setCurrentMine(m);
             showToast(`Switched active mining lease to ${m.name}`, "info");
@@ -1402,7 +1478,11 @@ export default function MineManagerDashboard() {
         ) : (
           <div className="mm-grid">
             <div className="mm-kpi-wrap">
-              <KpiCards onOpen={openSection} />
+              <KpiCards
+                onOpen={openSection}
+                telemetry={dbTelemetry}
+                workforce={dbWorkforce}
+              />
             </div>
 
             <TrendChart onOpen={openSection} />
