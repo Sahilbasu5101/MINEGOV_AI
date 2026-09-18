@@ -70,6 +70,7 @@ model Colliery {
   latitude         Float?
   longitude        Float?
   type             String            // OPENCAST, UNDERGROUND, MIXED
+  hazardMapUrl     String?           // Cloudinary URL for Mine Ventilation & Hazard Map
   pits             Pit[]
   sensorReadings   SensorReading[]
   safetyNotices    SafetyNotice[]
@@ -134,6 +135,7 @@ model SafetyNotice {
   status          String     @default("ACTIVE") // ACTIVE, EXECUTED, RESOLVED
   signedBy        String?
   hsmSignature    String?    // SHA-256 Cryptographic audit signature
+  evidenceUrl     String?    // Cloudinary HTTPS URL of photographic violation evidence
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
@@ -155,13 +157,14 @@ model OcemsReading {
 }
 
 model AfforestationRecord {
-  id            String     @id @default(uuid())
-  subsidiaryId  String
-  subsidiary    Subsidiary @relation(fields: [subsidiaryId], references: [id])
-  fiscalYear    String     // "2025-26"
-  targetHa      Float
-  achievedHa    Float
-  canopyDensity Float
+  id             String     @id @default(uuid())
+  subsidiaryId   String
+  subsidiary     Subsidiary @relation(fields: [subsidiaryId], references: [id])
+  fiscalYear     String     // "2025-26"
+  targetHa       Float
+  achievedHa     Float
+  canopyDensity  Float
+  droneSurveyUrl String?    // Cloudinary HTTPS URL of Drone Aerial Survey / Satellite Twin
 }
 
 // ----------------------------------------------------
@@ -185,6 +188,7 @@ model WorkerRecord {
   pmeDueDate          DateTime
   mvtrRefresherDate   DateTime
   biometricGateLocked Boolean   @default(false)
+  medicalCertUrl      String?   // Cloudinary HTTPS URL of Form 'O' / Chest X-Ray PDF
 }
 
 // ----------------------------------------------------

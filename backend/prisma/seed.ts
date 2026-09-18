@@ -11,7 +11,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log("🌱 Starting MINEGOV_AI database seed on Neon PostgreSQL...");
+  console.log("🌱 Starting MINEGOV_AI database seed with Cloudinary Media on Neon PostgreSQL...");
 
   // Clear existing data safely
   await prisma.auditLedgerEntry.deleteMany({});
@@ -69,7 +69,7 @@ async function main() {
     },
   });
 
-  // 3. Seed Collieries & Pits
+  // 3. Seed Collieries & Pits (with Cloudinary Hazard Map URLs)
   const moonidihColliery = await prisma.colliery.create({
     data: {
       name: "Moonidih Deep Seam UG",
@@ -77,6 +77,7 @@ async function main() {
       latitude: 23.7428,
       longitude: 86.3456,
       type: "UNDERGROUND",
+      hazardMapUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/hazard_maps/moonidih_underground_ventilation_schematic_v2.png",
       pits: {
         create: [
           { name: "Shaft-1 Seam XVI", status: "ACTIVE" },
@@ -93,6 +94,7 @@ async function main() {
       latitude: 22.3486,
       longitude: 82.5936,
       type: "OPENCAST",
+      hazardMapUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/hazard_maps/gevra_opencast_haul_road_evacuation_blueprint.png",
       pits: {
         create: [
           { name: "East Bench Pit 14", status: "ACTIVE" },
@@ -109,12 +111,13 @@ async function main() {
       latitude: 24.1121,
       longitude: 82.6841,
       type: "OPENCAST",
+      hazardMapUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/hazard_maps/jayant_strata_slope_stability_map.png",
       pits: {
         create: [{ name: "Main Bench 03", status: "ACTIVE" }],
       },
     },
   });
-  console.log("✅ Seeded Regional Areas, Collieries, and Pits.");
+  console.log("✅ Seeded Regional Areas, Collieries, and Pits with Cloudinary Hazard Maps.");
 
   // 4. Seed Users with multi-tier RBAC
   const defaultPasswordHash = await bcrypt.hash("Password@123", 10);
@@ -199,7 +202,7 @@ async function main() {
   }
   console.log("✅ Seeded SCADA Sensor Readings.");
 
-  // 6. Seed DGMS Safety Notice & Section 22 Orders
+  // 6. Seed DGMS Safety Notices with Cloudinary Photographic Evidence URLs
   await prisma.safetyNotice.create({
     data: {
       noticeId: "SEC22-2026-001",
@@ -211,10 +214,26 @@ async function main() {
       status: "ACTIVE",
       signedBy: "Prabhat Kumar (DGMS Inspector)",
       hsmSignature: crypto.createHash("sha256").update("SEC22-2026-001-DGMS-SIGNED-TRUE").digest("hex"),
+      evidenceUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/dgms_inquiry_evidence/lopkpyjpziukxcmxvke4.png",
     },
   });
 
-  // 7. Seed CPCB OCEMS & Bio-Reclamation
+  await prisma.safetyNotice.create({
+    data: {
+      noticeId: "SEC22-2026-002",
+      collieryId: gevraColliery.id,
+      regulation: "CMR 123 (Strata Control and Slope Stability in Highwall)",
+      parameter: "Tension crack detected on Bench 14 (Width: 85mm)",
+      severity: AlertLevel.WATCH,
+      statutoryAction: "DUMP TRUCK MOVEMENT SUSPENDED ON HAUL ROAD C-3",
+      status: "ACTIVE",
+      signedBy: "A. K. Sharma (Area GM)",
+      evidenceUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/dgms_inquiry_evidence/gevra_highwall_strata_crack_bench14.jpg",
+    },
+  });
+  console.log("✅ Seeded DGMS Safety Notices with Cloudinary photographic evidence.");
+
+  // 7. Seed CPCB OCEMS & Bio-Reclamation with Drone Survey URLs
   await prisma.ocemsReading.create({
     data: {
       collieryId: gevraColliery.id,
@@ -232,10 +251,23 @@ async function main() {
       targetHa: 250.0,
       achievedHa: 218.4,
       canopyDensity: 0.42,
+      droneSurveyUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/drone_surveys/bccl_katras_overburden_plantation_2026.jpg",
     },
   });
 
-  // 8. Seed Workforce PME & Biometric Lockout
+  await prisma.afforestationRecord.create({
+    data: {
+      subsidiaryId: subsidiaries["SECL"].id,
+      fiscalYear: "2025-26",
+      targetHa: 400.0,
+      achievedHa: 388.0,
+      canopyDensity: 0.58,
+      droneSurveyUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/drone_surveys/secl_gevra_bio_reclamation_canopy.jpg",
+    },
+  });
+  console.log("✅ Seeded CPCB OCEMS & Bio-Reclamation with Cloudinary Drone Survey URLs.");
+
+  // 8. Seed Workforce PME & Biometric Lockout with Medical Certificate PDFs
   await prisma.workerRecord.create({
     data: {
       workerId: "EMP-BCCL-89421",
@@ -246,6 +278,7 @@ async function main() {
       pmeDueDate: new Date("2026-10-15"),
       mvtrRefresherDate: new Date("2026-11-20"),
       biometricGateLocked: false,
+      medicalCertUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/pme_certificates/form_o_medical_fitness_rameshwar_mahato.pdf",
     },
   });
 
@@ -258,11 +291,27 @@ async function main() {
       pmeStatus: PmeStatus.UNFIT,
       pmeDueDate: new Date("2026-08-01"),
       mvtrRefresherDate: new Date("2026-07-15"),
-      biometricGateLocked: true, // Gatepass Locked Out
+      biometricGateLocked: true, // Gatepass Locked Out due to UNFIT PME
+      medicalCertUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/pme_certificates/form_o_medical_unfit_chest_xray_dinesh_bauri.pdf",
     },
   });
 
-  // 9. Seed Cryptographic Audit Ledger Entry
+  await prisma.workerRecord.create({
+    data: {
+      workerId: "EMP-SECL-10492",
+      collieryId: gevraColliery.id,
+      name: "Rajeshwar Singh",
+      designation: "Dumper Operator (CAT 777E)",
+      pmeStatus: PmeStatus.FIT,
+      pmeDueDate: new Date("2027-03-10"),
+      mvtrRefresherDate: new Date("2026-12-05"),
+      biometricGateLocked: false,
+      medicalCertUrl: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/pme_certificates/form_o_medical_fit_rajeshwar_singh.pdf",
+    },
+  });
+  console.log("✅ Seeded Workforce PME with Cloudinary Form 'O' Medical Certificate PDFs.");
+
+  // 9. Seed Cryptographic Audit Ledger Genesis Entry
   const prevHash = "0000000000000000000000000000000000000000000000000000000000000000";
   const entityId = "SEC22-2026-001";
   const actionType = "DGMS_SECTION_22_ISSUED";
@@ -282,7 +331,7 @@ async function main() {
   });
 
   console.log("✅ Seeded Cryptographic HSM Audit Ledger Genesis Entry.");
-  console.log("🎉 Seeding completed successfully on Neon PostgreSQL!");
+  console.log("🎉 Complete Seeding with Cloudinary Media finished successfully on Neon PostgreSQL!");
 }
 
 main()

@@ -2,21 +2,21 @@
 // Replace these with API calls once the backend is ready.
 
 export const mineInfo = {
-  name: "Sukhdev Mine",
+  name: "Moonidih Project (BCCL)",
   shift: "Day Shift",
-  date: "11 Sep 2026",
-  manager: { name: "Rahul Kumar", role: "Mine Manager", initials: "RK" },
-  lastUpdated: "11 Sep 2026, 10:30 AM",
+  date: "18 Sep 2026",
+  manager: { name: "Rahul Kumar", role: "Mine Manager (First Class)", initials: "RK" },
+  lastUpdated: "18 Sep 2026, 10:30 AM",
 };
 
 export const pits = [
-  { id: 1, name: "North Pit", status: "normal", top: "18%", left: "48%" },
-  { id: 2, name: "West Pit", status: "warning", top: "48%", left: "14%" },
-  { id: 3, name: "Main Pit", status: "critical", top: "52%", left: "45%" },
-  { id: 4, name: "East Pit", status: "normal", top: "58%", left: "76%" },
+  { id: 1, name: "Shaft-1 Seam XVI", status: "normal", top: "18%", left: "48%" },
+  { id: 2, name: "Longwall West Face", status: "warning", top: "48%", left: "14%" },
+  { id: 3, name: "Deep Dip Section", status: "critical", top: "52%", left: "45%" },
+  { id: 4, name: "East Extraction Panel", status: "normal", top: "58%", left: "76%" },
   {
     id: 5,
-    name: "Processing Plant",
+    name: "Moonidih Coal Washery",
     status: "offline",
     top: "82%",
     left: "46%",
@@ -24,18 +24,18 @@ export const pits = [
 ];
 
 export const availableMines = [
-  { id: "sukhdev", name: "Sukhdev Mine (BCCL)", area: "Dhanbad Coal Basin", shift: "Day Shift", type: "Mixed OCP / Deep Pit", manager: "Rahul Kumar", alertsCount: 3, riskScore: 58 },
-  { id: "gaslitand", name: "Gaslitand OCP", area: "Katras Area Office", shift: "Day Shift", type: "Open Cast Project", manager: "Rahul Kumar", alertsCount: 5, riskScore: 72 },
-  { id: "kusunda", name: "Kusunda Open Cast", area: "Kusunda Regional Area", shift: "Day Shift", type: "Heavy Earth OCP", manager: "Rahul Kumar", alertsCount: 2, riskScore: 44 },
-  { id: "moonidih", name: "Moonidih Underground", area: "Western Jharia Coalfield", shift: "Day Shift", type: "Longwall Caved UG", manager: "Rahul Kumar", alertsCount: 4, riskScore: 65 },
+  { id: "moonidih", name: "Moonidih Project (BCCL)", area: "Western Jharia Area, Dhanbad", shift: "Day Shift", type: "Deep Underground (Degree III)", manager: "Rahul Kumar", alertsCount: 3, riskScore: 58 },
+  { id: "gaslitand", name: "Gaslitand Colliery (BCCL)", area: "Katras Area IV, Dhanbad", shift: "Day Shift", type: "Mixed OCP / Deep Pit", manager: "Rahul Kumar", alertsCount: 5, riskScore: 72 },
+  { id: "kusunda", name: "Kusunda Opencast (BCCL)", area: "Kusunda Area VI, Dhanbad", shift: "Day Shift", type: "Heavy Earth OCP (Fire Area)", manager: "Rahul Kumar", alertsCount: 2, riskScore: 44 },
+  { id: "lodna", name: "Lodna / Jealgora (BCCL)", area: "Lodna Area X, Dhanbad", shift: "Day Shift", type: "Underground Coking Seam", manager: "Rahul Kumar", alertsCount: 4, riskScore: 65 },
 ];
 
 export const pitDetailsData = {
-  1: { name: "North Pit", status: "normal", depth: "142m", output: "2,840 T/day", hemm: "6 Dumpers, 2 Shovels", ch4: "0.02%", co: "4 ppm", waterPumps: "Operational (Normal)", safetyRating: "96%" },
-  2: { name: "West Pit", status: "warning", depth: "185m", output: "1,920 T/day", hemm: "4 Dumpers, 1 Shovel", ch4: "0.18%", co: "9 ppm", waterPumps: "Pump #2 Servicing", safetyRating: "82%" },
-  3: { name: "Main Pit", status: "critical", depth: "260m", output: "3,100 T/day", hemm: "8 Dumpers, 3 Shovels", ch4: "0.45%", co: "14 ppm (High)", waterPumps: "Operational (High Flow)", safetyRating: "68%" },
-  4: { name: "East Pit", status: "normal", depth: "110m", output: "1,450 T/day", hemm: "3 Dumpers, 1 Shovel", ch4: "0.05%", co: "5 ppm", waterPumps: "Operational", safetyRating: "94%" },
-  5: { name: "Processing Plant", status: "offline", depth: "Surface", output: "6,200 T/day Cap.", hemm: "Conveyor Line 2", ch4: "N/A", co: "2 ppm", waterPumps: "Circulation OK", safetyRating: "88%" },
+  1: { name: "Shaft-1 Seam XVI", status: "normal", depth: "320m", output: "2,840 T/day", hemm: "1 Shearer, 6 Dumpers", ch4: "0.42%", co: "6 ppm", waterPumps: "Operational (Normal)", safetyRating: "96%" },
+  2: { name: "Longwall West Face", status: "warning", depth: "380m", output: "1,920 T/day", hemm: "2 AFCs, 4 Shuttle Cars", ch4: "0.78% (Warning)", co: "11 ppm", waterPumps: "Pump #2 Servicing", safetyRating: "82%" },
+  3: { name: "Deep Dip Section", status: "critical", depth: "420m", output: "3,100 T/day", hemm: "1 Continuous Miner, 8 Dumpers", ch4: "1.15% (Critical)", co: "18 ppm (High)", waterPumps: "Turbine Pump (4,500 GPM)", safetyRating: "68%" },
+  4: { name: "East Extraction Panel", status: "normal", depth: "280m", output: "1,450 T/day", hemm: "Roadheader RH-01", ch4: "0.25%", co: "5 ppm", waterPumps: "Operational", safetyRating: "94%" },
+  5: { name: "Moonidih Coal Washery", status: "offline", depth: "Surface", output: "6,200 T/day Cap.", hemm: "Dense Media Cyclone & Belt #2", ch4: "N/A", co: "2 ppm", waterPumps: "Circulation OK", safetyRating: "88%" },
 };
 
 export const trendDataRanges = {
