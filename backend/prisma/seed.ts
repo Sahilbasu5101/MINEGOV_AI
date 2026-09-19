@@ -15,6 +15,8 @@ async function main() {
 
   // Clear existing data safely
   await prisma.auditLedgerEntry.deleteMany({});
+  await prisma.reportedIssueRecord.deleteMany({});
+  await prisma.inspectionReport.deleteMany({});
   await prisma.boardEscalation.deleteMany({});
   await prisma.workerRecord.deleteMany({});
   await prisma.ocemsReading.deleteMany({});
@@ -178,6 +180,66 @@ async function main() {
       role: UserRole.CPCB_OFFICER,
       passwordHash: defaultPasswordHash,
     },
+    {
+      email: "sirdar.kusunda@bccl.gov.in",
+      fullName: "Ramesh Kumar (Mining Sirdar)",
+      apexId: "TEST-SIR-001",
+      role: UserRole.SIRDAR,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
+    {
+      email: "safety.katras@dgms.gov.in",
+      fullName: "Amit Verma (DGMS Safety Inspector)",
+      apexId: "TEST-SI-001",
+      role: UserRole.SAFETY_INSPECTOR,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
+    {
+      email: "tech.moonidih@bccl.gov.in",
+      fullName: "Vikash Singh (Competent Person Safety)",
+      apexId: "TEST-TECH-001",
+      role: UserRole.TECHNICAL_COMPETENT_PERSON,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
+    {
+      email: "env.dhanbad@cpcb.gov.in",
+      fullName: "Sudhanshu Sharma (Environment Officer)",
+      apexId: "TEST-ENV-001",
+      role: UserRole.ENVIRONMENT_OFFICER,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
+    {
+      email: "prod.moonidih@bccl.gov.in",
+      fullName: "Rohit Kumar (Production Officer)",
+      apexId: "TEST-PROD-001",
+      role: UserRole.PRODUCTION_OFFICER,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
+    {
+      email: "welfare.katras@bccl.gov.in",
+      fullName: "Priya Kumari (Welfare Officer)",
+      apexId: "TEST-WEL-001",
+      role: UserRole.WELFARE_OFFICER,
+      subsidiaryId: subsidiaries["BCCL"].id,
+      areaId: katrasArea.id,
+      collieryId: moonidihColliery.id,
+      passwordHash: defaultPasswordHash,
+    },
   ];
 
   for (const user of usersData) {
@@ -331,6 +393,61 @@ async function main() {
   });
 
   console.log("✅ Seeded Cryptographic HSM Audit Ledger Genesis Entry.");
+
+  // 10. Seed Sample Field Inspection and Issue with Cloudinary Media
+  const sirdarUser = await prisma.user.findFirst({ where: { apexId: "TEST-SIR-001" } });
+  if (sirdarUser) {
+    const sampleInspection = await prisma.inspectionReport.create({
+      data: {
+        reportNumber: "INSP-2026-001",
+        collieryId: moonidihColliery.id,
+        inspectorId: sirdarUser.id,
+        shift: "Shift A (06:00 - 14:00)",
+        workingLocation: "Working Face - 1",
+        dateSubtitle: "(Today)",
+        status: "SUBMITTED",
+        summaryCounts: { total: 24, completed: 24, pending: 0, issues: 2 },
+        checklistItemsJson: [
+          { id: "chk-01", number: "01", title: "Personal Protective Equipment (PPE)", category: "Safety", status: "PASS" },
+          { id: "chk-07", number: "07", title: "Highwall & Side Wall Cracks", category: "Safety", status: "ISSUE" },
+          { id: "chk-08", number: "08", title: "Conveyor Belt Guard & Emergency Pull Cord", category: "Mechanical", status: "ISSUE" },
+        ],
+      },
+    });
+
+    await prisma.reportedIssueRecord.create({
+      data: {
+        issueNumber: "ISS-2026-001",
+        inspectionReportId: sampleInspection.id,
+        collieryId: moonidihColliery.id,
+        reporterId: sirdarUser.id,
+        category: "Machinery & Equipment",
+        itemTitle: "Conveyor Belt Guard & Emergency Pull Cord",
+        itemDescription: "Inspect rotating conveyor parts for guards and test emergency stop pull cords.",
+        workingLocation: "Working Face - 1",
+        observation: "Missing safety guard mesh on drive head pulley. Emergency trip wire disconnected.",
+        immediateAction: "Area barricaded / Work stopped",
+        additionalRemarks: "Fitters informed for urgent repair before resuming coal haulage.",
+        severity: AlertLevel.CRITICAL,
+        riskScore: 92,
+        riskCategory: "Critical Risk",
+        latitude: 23.7428,
+        longitude: 86.3456,
+        gpsStatus: "CAPTURED",
+        evidenceUrls: [
+          {
+            id: "ev-01",
+            type: "photo",
+            url: "https://res.cloudinary.com/fcndk1bh/image/upload/v1789737866/minegov_ai/dgms_inquiry_evidence/lopkpyjpziukxcmxvke4.png",
+            name: "conveyor_pulley_missing_guard.jpg",
+          },
+        ],
+        status: "SUBMITTED",
+      },
+    });
+    console.log("✅ Seeded Mobile Field Inspection & Issue with Cloudinary Media URL.");
+  }
+
   console.log("🎉 Complete Seeding with Cloudinary Media finished successfully on Neon PostgreSQL!");
 }
 
