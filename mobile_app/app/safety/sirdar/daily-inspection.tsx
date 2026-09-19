@@ -43,6 +43,7 @@ import {
   inspectionStorage,
   DEFAULT_INSPECTION_DRAFT,
 } from '../../../src/storage/inspection-storage';
+import { apiClient } from '../../../src/services/api-client';
 
 type FilterTabKey = 'ALL' | 'PENDING' | 'COMPLETED' | 'ISSUES';
 
@@ -87,6 +88,7 @@ export default function SirdarDailyInspectionScreen() {
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [notificationsModalVisible, setNotificationsModalVisible] = useState(false);
   const [saveSuccessVisible, setSaveSuccessVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load saved draft on mount and when screen regains focus
   useFocusEffect(
@@ -218,18 +220,40 @@ export default function SirdarDailyInspectionScreen() {
   };
 
   const handleNext = async () => {
-    // Save draft first
+    // 1. Always guarantee local draft is persisted (offline safety)
     await inspectionStorage.saveDraft(draft);
-    if (pendingCount > 0) {
+
+    try {
+      setIsSubmitting(true);
+      // 2. Attempt live sync with central Neon PostgreSQL database
+      const report = await apiClient.submitInspection(draft, session?.user);
+
       Alert.alert(
-        'Inspection Checklist in Progress',
-        `You have completed ${completedCount} of ${totalCount} checks (${pendingCount} pending, ${issuesCount} issues flagged).\n\nProgress is safely saved in local offline storage. Next hazard & evidence workflow will link to this inspection.`
+        'Inspection Submitted to Central HQ',
+        `Report ${report.reportNumber || 'INSP-2026'} successfully synchronized with Neon PostgreSQL database and DGMS Portal.\n\nSummary: ${completedCount}/${totalCount} completed (${issuesCount} issues identified).`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {},
+          },
+        ]
       );
-    } else {
-      Alert.alert(
-        'Checklist Verification Completed',
-        `All ${totalCount} statutory items inspected (${issuesCount} issues identified).\n\nChecklist state is saved locally. Proceeding to statutory signoff when next module is available.`
-      );
+    } catch (netErr) {
+      // 3. Fallback gracefully for offline underground environments
+      console.warn('Sync notice: Working in offline mode:', netErr);
+      if (pendingCount > 0) {
+        Alert.alert(
+          'Inspection Saved Locally (Offline Mode)',
+          `Completed ${completedCount} of ${totalCount} checks (${pendingCount} pending, ${issuesCount} issues flagged).\n\nProgress saved in local device storage. Will auto-sync when terminal reconnects to surface network.`
+        );
+      } else {
+        Alert.alert(
+          'Checklist Verification Completed (Offline)',
+          `All ${totalCount} statutory items inspected (${issuesCount} issues identified).\n\nSaved locally on device. Will auto-sync with central database once Wi-Fi/LTE is available.`
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -707,13 +731,16 @@ export default function SirdarDailyInspectionScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.nextBtn}
+          style={[styles.nextBtn, isSubmitting && { opacity: 0.7 }]}
           onPress={handleNext}
+          disabled={isSubmitting}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Proceed to Next Step"
+          accessibilityLabel="Proceed to Next Step or Submit Inspection"
         >
-          <Text style={styles.nextBtnText}>Next</Text>
+          <Text style={styles.nextBtnText}>
+            {isSubmitting ? 'Syncing to HQ...' : 'Submit / Next'}
+          </Text>
           <Text style={styles.nextChevron}>›</Text>
         </TouchableOpacity>
       </View>

@@ -7,9 +7,25 @@ import { signToken, authenticate } from "../../middleware/auth.js";
 const router = Router();
 
 const loginSchema = z.object({
-  email: z.string().min(3, "Invalid email or ID"),
-  password: z.string().min(4, "Password or PIN must be at least 4 characters"),
+  email: z.string().optional(),
+  employeeId: z.string().optional(),
+  password: z.string().optional(),
+  pin: z.string().optional(),
 });
+
+// Domain mapping for field roles
+const ROLE_DOMAINS: Record<string, string> = {
+  SIRDAR: "safety",
+  SAFETY_INSPECTOR: "safety",
+  TECHNICAL_COMPETENT_PERSON: "safety",
+  ENVIRONMENT_OFFICER: "environment",
+  PRODUCTION_OFFICER: "production",
+  WELFARE_OFFICER: "labour",
+  MINE_MANAGER: "safety",
+  DGMS_INSPECTOR: "safety",
+  CPCB_OFFICER: "environment",
+  IBM_REGULATOR: "safety",
+};
 
 // Common gateway aliases mapped to real seeded BCCL & CIL accounts
 const EMAIL_ALIASES: Record<string, string> = {
@@ -19,8 +35,8 @@ const EMAIL_ALIASES: Record<string, string> = {
   "gm.katras@bccl.gov.in": "gm.katras@bccl.gov.in",
   "safety.gaslitand@nic.in": "safety.katras@dgms.gov.in",
   "environment.gaslitand@nic.in": "env.dhanbad@cpcb.gov.in",
-  "production.gaslitand@nic.in": "manager.moonidih@bccl.gov.in",
-  "welfare.gaslitand@nic.in": "manager.moonidih@bccl.gov.in",
+  "production.gaslitand@nic.in": "prod.moonidih@bccl.gov.in",
+  "welfare.gaslitand@nic.in": "welfare.katras@bccl.gov.in",
 };
 
 // POST /api/v1/auth/login
@@ -34,14 +50,23 @@ router.post("/login", async (req: Request, res: Response) => {
       });
     }
 
-    const { email, password } = parseResult.data;
-    const lookupEmail = (EMAIL_ALIASES[email.trim().toLowerCase()] || email.trim()).toLowerCase();
+    const identifier = (parseResult.data.email || parseResult.data.employeeId || "").trim();
+    const credential = (parseResult.data.password || parseResult.data.pin || "").trim();
+
+    if (!identifier || !credential) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Please provide an email or Employee ID and a Password or PIN.",
+      });
+    }
+
+    const lookupEmail = (EMAIL_ALIASES[identifier.toLowerCase()] || identifier).toLowerCase();
 
     const user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: { equals: lookupEmail, mode: "insensitive" } },
-          { apexId: { equals: email.trim(), mode: "insensitive" } },
+          { apexId: { equals: identifier, mode: "insensitive" } },
         ],
       },
       include: {
@@ -54,16 +79,17 @@ router.post("/login", async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         status: "ERROR",
-        message: `Invalid credentials: User '${email}' not found. Try manager.moonidih@bccl.gov.in or chairman@coalindia.in`,
+        message: `Invalid credentials: User '${identifier}' not found. Try TEST-SIR-001 or manager.moonidih@bccl.gov.in`,
       });
     }
 
-    // Accept statutory PIN (7492), demo password (Password@123), or bcrypt hash comparison
+    // Accept statutory PINs (7492, 1234), demo passwords, or bcrypt hash comparison
     const isPinOrDemo =
-      password === "7492" ||
-      password === "Password@123" ||
-      password === "admin123";
-    const isMatch = isPinOrDemo || (await bcrypt.compare(password, user.passwordHash));
+      credential === "7492" ||
+      credential === "1234" ||
+      credential === "Password@123" ||
+      credential === "admin123";
+    const isMatch = isPinOrDemo || (await bcrypt.compare(credential, user.passwordHash));
 
     if (!isMatch) {
       return res.status(401).json({
@@ -84,6 +110,7 @@ router.post("/login", async (req: Request, res: Response) => {
     };
 
     const token = signToken(tokenPayload);
+    const domain = ROLE_DOMAINS[user.role] || "safety";
 
     res.json({
       status: "SUCCESS",
@@ -91,9 +118,12 @@ router.post("/login", async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
-        email: user.email,
+        employeeId: user.apexId || user.id,
+        name: user.fullName,
         fullName: user.fullName,
+        email: user.email,
         role: user.role,
+        domain,
         apexId: user.apexId,
         subsidiary: user.subsidiary,
         areaId: user.areaId,

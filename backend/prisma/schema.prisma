@@ -19,21 +19,29 @@ enum UserRole {
   DGMS_INSPECTOR
   CPCB_OFFICER
   IBM_REGULATOR
+  SIRDAR
+  SAFETY_INSPECTOR
+  TECHNICAL_COMPETENT_PERSON
+  ENVIRONMENT_OFFICER
+  PRODUCTION_OFFICER
+  WELFARE_OFFICER
 }
 
 model User {
-  id            String       @id @default(uuid())
-  email         String       @unique
-  passwordHash  String
-  fullName      String
-  apexId        String?      @unique
-  role          UserRole
-  subsidiaryId  String?
-  areaId        String?
-  collieryId    String?
-  subsidiary    Subsidiary?  @relation(fields: [subsidiaryId], references: [id])
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id             String                @id @default(uuid())
+  email          String                @unique
+  passwordHash   String
+  fullName       String
+  apexId         String?               @unique
+  role           UserRole
+  subsidiaryId   String?
+  areaId         String?
+  collieryId     String?
+  subsidiary     Subsidiary?           @relation(fields: [subsidiaryId], references: [id])
+  inspections    InspectionReport[]
+  reportedIssues ReportedIssueRecord[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
 
   @@index([role])
 }
@@ -77,6 +85,8 @@ model Colliery {
   ocemsReadings    OcemsReading[]
   workers          WorkerRecord[]
   boardEscalations BoardEscalation[]
+  inspections      InspectionReport[]
+  reportedIssues   ReportedIssueRecord[]
   createdAt        DateTime          @default(now())
 }
 
@@ -105,6 +115,9 @@ enum AlertLevel {
   NORMAL
   WATCH
   CRITICAL
+  LOW
+  MEDIUM
+  HIGH
 }
 
 model SensorReading {
@@ -218,4 +231,57 @@ model AuditLedgerEntry {
   timestamp    DateTime @default(now())
 
   @@index([timestamp])
+}
+
+// ----------------------------------------------------
+// 8. Field Terminal: Daily Inspection & Mobile Issues
+// ----------------------------------------------------
+model InspectionReport {
+  id                 String                @id @default(uuid())
+  reportNumber       String                @unique // e.g. INSP-2026-001
+  collieryId         String
+  colliery           Colliery              @relation(fields: [collieryId], references: [id])
+  inspectorId        String
+  inspector          User                  @relation(fields: [inspectorId], references: [id])
+  shift              String                // Shift A (06:00 - 14:00), etc.
+  workingLocation    String                // Working Face - 1
+  dateSubtitle       String?               // e.g. (Today)
+  status             String                @default("SUBMITTED") // DRAFT, SUBMITTED, UNDER_REVIEW, VERIFIED, CLOSED
+  checklistItemsJson Json                  // 24 checklist items with statuses
+  summaryCounts      Json?                 // { total, pending, completed, issues }
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  issues             ReportedIssueRecord[]
+
+  @@index([collieryId, createdAt])
+}
+
+model ReportedIssueRecord {
+  id                 String            @id @default(uuid())
+  issueNumber        String            @unique // e.g. ISS-2026-001
+  inspectionReportId String?
+  inspectionReport   InspectionReport? @relation(fields: [inspectionReportId], references: [id])
+  collieryId         String
+  colliery           Colliery          @relation(fields: [collieryId], references: [id])
+  reporterId         String
+  reporter           User              @relation(fields: [reporterId], references: [id])
+  category           String            // Machinery & Equipment, Safety, etc.
+  itemTitle          String            // Guards / Protective Covers
+  itemDescription    String?
+  workingLocation    String            // Working Face - 1
+  observation        String
+  immediateAction    String?
+  additionalRemarks  String?
+  severity           AlertLevel        @default(MEDIUM)
+  riskScore          Int               @default(50)
+  riskCategory       String?
+  latitude           Float?
+  longitude          Float?
+  gpsStatus          String?           // CAPTURED, PENDING, UNAVAILABLE
+  evidenceUrls       Json?             // Array of { id, type, url, name, size, duration }
+  status             String            @default("PENDING_SYNC") // PENDING_SYNC, SUBMITTED, UNDER_REVIEW, RESOLVED
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([collieryId, severity, status])
 }

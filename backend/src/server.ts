@@ -11,6 +11,8 @@ import cilRouter from "./modules/cil/cil.routes.js";
 import regionalRouter from "./modules/regional/regional.routes.js";
 import minesRouter from "./modules/mines/mines.routes.js";
 import uploadRouter from "./modules/upload/upload.routes.js";
+import inspectionsRouter from "./modules/inspections/inspections.routes.js";
+import issuesRouter from "./modules/issues/issues.routes.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -18,14 +20,23 @@ const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
-// Core Middleware
-app.use(cors({ origin: clientUrl, credentials: true }));
-app.use(express.json());
+// Core Middleware: Configure CORS for Web (Vite) and Mobile (React Native / Expo / Emulators)
+app.use(
+  cors({
+    origin: (_origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl) or any local/dev network origin
+      callback(null, true);
+    },
+    credentials: true,
+  })
+);
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Setup Socket.io for Real-Time SCADA Telemetry
 export const io = new SocketIOServer(server, {
   cors: {
-    origin: clientUrl,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -65,6 +76,8 @@ app.use("/api/v1/cil", cilRouter);
 app.use("/api/v1/regional", regionalRouter);
 app.use("/api/v1/mines", minesRouter);
 app.use("/api/v1/upload", uploadRouter);
+app.use("/api/v1/inspections", inspectionsRouter);
+app.use("/api/v1/issues", issuesRouter);
 
 // Health check endpoint (verifies Neon Postgres connection)
 app.get("/api/health", async (_req: Request, res: Response) => {
