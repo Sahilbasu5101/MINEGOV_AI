@@ -56,3 +56,21 @@ reference, including:
 
 Do not treat the physical phone mockup in a reference image as part of
 the application's UI.
+
+## Development and Validation Rules
+
+- Target Expo + React Native + TypeScript.
+- Primary validation target is a physical Android device using Expo Go.
+- Do not use Expo Web or Chrome as the primary mobile UI validation target.
+- Do not run Node, TypeScript, Expo, or Metro commands with:
+  `--max-old-space-size=8192`
+- Prefer:
+  `npx tsc --noEmit`
+- Do not repeatedly run the same validation command unless the previous run failed or files changed.
+- Keep implementation tasks small and focused.
+- Do not rewrite large existing files when a smaller targeted change is sufficient.
+- Do not modify completed screens unless explicitly requested.
+- Before adding a dependency, check whether the existing Expo/React Native stack can solve the requirement.
+- Preserve existing project structure and naming conventions.
+- Do not fabricate GPS coordinates, sensor values, compliance results, or backend responses.
+- When a backend/API is not implemented, use a clearly isolated mock/development adapter rather than hardcoding fake production behavior.

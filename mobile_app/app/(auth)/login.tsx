@@ -43,6 +43,8 @@ export default function LoginScreen() {
       const session = await signIn(employeeId.trim(), pin.trim());
       if (session.user.role === 'SIRDAR') {
         router.replace('/safety/sirdar');
+      } else if (session.user.role === 'TECHNICAL_COMPETENT_PERSON') {
+        router.replace('/safety/technical');
       } else {
         Alert.alert('Success', `Welcome to MineGov AI Field Terminal!`);
       }
