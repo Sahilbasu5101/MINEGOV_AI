@@ -25,6 +25,7 @@ import {
   Users,
 } from "lucide-react";
 import { MineMap } from "./components/MineMap";
+import { supportedLanguages, useLanguage } from "../i18n/LanguageContext";
 
 const capabilities = [
   [Activity, "Real-time Monitoring"],
@@ -111,6 +112,7 @@ function Brand() {
 }
 
 export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
+  const { language, setLanguage, t } = useLanguage();
   const [isLight, setIsLight] = useState(false);
   const [textScale, setTextScale] = useState(1);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -127,26 +129,26 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
           aria-label="Primary navigation"
         >
           <a className="active" href="#top">
-            Home
+            {t("home")}
           </a>
-          <a href="#platform">About</a>
+          <a href="#platform">{t("about")}</a>
           <a href="#platform">
-            Platform <ChevronDown size={12} />
+            {t("platform")} <ChevronDown size={12} />
           </a>
           <a href="#compliance">
-            Compliance <ChevronDown size={12} />
+            {t("compliance")} <ChevronDown size={12} />
           </a>
           <a href="#intelligence">
-            Intelligence <ChevronDown size={12} />
+            {t("intelligence")} <ChevronDown size={12} />
           </a>
           <a href="#resources">
-            Resources <ChevronDown size={12} />
+            {t("resources")} <ChevronDown size={12} />
           </a>
         </nav>
         <div className="header-actions">
           <button className="search-button" type="button" aria-label="Search">
             <Search size={15} />
-            <span>Search...</span>
+            <span>{t("search")}</span>
           </button>
           <div className="type-controls" aria-label="Text size controls">
             <button
@@ -173,16 +175,28 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
           >
             {isLight ? <Moon size={16} /> : <Sun size={16} />}
           </button>
-          <button className="language-button" type="button">
-            <Globe2 size={14} /> EN <ChevronDown size={12} />
-          </button>
+          <label className="language-button" title={t("language")}>
+            <Globe2 size={14} />
+            <select
+              aria-label={t("language")}
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+            >
+              {supportedLanguages.map(({ code, name }) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={12} />
+          </label>
           <button
             className="gateway-nav-button"
             type="button"
             onClick={onEnterMineGov}
             title="Open Role-Based Access Gateway"
           >
-            <LockKeyhole size={13} /> Gateway Login
+            <LockKeyhole size={13} /> {t("gatewayLogin")}
           </button>
           <button
             className="mobile-menu"
@@ -212,19 +226,15 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
           variants={reveal}
         >
           <p className="eyebrow">
-            <span></span> SAFE MINES &nbsp; | &nbsp; RESPONSIBLE MINERALS &nbsp;
-            | &nbsp; A STRONGER INDIA
+            <span></span> {t("safeMines")} &nbsp; | &nbsp;{" "}
+            {t("responsibleMinerals")} &nbsp; | &nbsp; {t("strongerIndia")}
           </p>
           <h1>
-            Intelligent Mining
+            {t("intelligentMining")}
             <br />
-            <em>for a Safer Tomorrow</em>
+            <em>{t("saferTomorrow")}</em>
           </h1>
-          <p className="hero-description">
-            MineGov AI is a unified digital platform for monitoring, analysing
-            and managing mining operations with real-time data, AI-driven
-            insights and geospatial intelligence.
-          </p>
+          <p className="hero-description">{t("heroDescription")}</p>
           <div className="hero-actions">
             <button
               className="primary-action"
@@ -233,8 +243,8 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
             >
               <Building2 size={19} />{" "}
               <span>
-                Enter MineGov AI
-                <small>For CIL &amp; Mine Operational Users</small>
+                {t("enterMineGov")}
+                <small>{t("cilUsers")}</small>
               </span>
               <ActionArrow />
             </button>
@@ -245,15 +255,14 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
             >
               <ShieldCheck size={20} />{" "}
               <span>
-                Regulatory Access
-                <small>For Government &amp; Regulatory Officials</small>
+                {t("regulatoryAccess")}
+                <small>{t("regulatoryOfficials")}</small>
               </span>
               <ActionArrow />
             </button>
           </div>
           <p className="access-note">
-            <LockKeyhole size={13} /> Authorised access only. All activities are
-            logged and monitored.
+            <LockKeyhole size={13} /> {t("authorisedOnly")}
           </p>
         </motion.div>
         <motion.div
@@ -270,13 +279,16 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
           </div>
           <MineMap />
           <div className="map-floating-tag tag-one">
-            <Radio size={13} /> Real-time Monitoring
+            <Radio size={13} />{" "}
+            {t("capabilityMonitoring") || "Real-time Monitoring"}
           </div>
           <div className="map-floating-tag tag-two">
-            <CheckCircle2 size={13} /> Safer Operations
+            <CheckCircle2 size={13} />{" "}
+            {t("capabilitySafety") || "Safer Operations"}
           </div>
           <div className="map-floating-tag tag-three">
-            <Leaf size={13} /> Sustainable Growth
+            <Leaf size={13} />{" "}
+            {t("capabilitySustainability") || "Sustainable Growth"}
           </div>
         </motion.div>
       </section>
@@ -433,9 +445,21 @@ export function LandingPage({ onEnterMineGov, onEnterRegulatory }) {
               ▶
             </a>
           </span>
-          <span className="footer-language">
-            <Globe2 size={14} /> English <ChevronDown size={12} />
-          </span>
+          <label className="footer-language" title={t("language")}>
+            <Globe2 size={14} />
+            <select
+              aria-label={t("language")}
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+            >
+              {supportedLanguages.map(({ code, name }) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={12} />
+          </label>
         </div>
       </footer>
     </main>
