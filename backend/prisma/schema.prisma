@@ -72,6 +72,7 @@ model RegionalArea {
 
 model Colliery {
   id               String            @id @default(uuid())
+  code             String?           // e.g. MND-01, GVR-02
   name             String
   areaId           String
   area             RegionalArea      @relation(fields: [areaId], references: [id], onDelete: Cascade)
@@ -171,6 +172,7 @@ model OcemsReading {
 
 model AfforestationRecord {
   id             String     @id @default(uuid())
+  areaOrDumpName String?
   subsidiaryId   String
   subsidiary     Subsidiary @relation(fields: [subsidiaryId], references: [id])
   fiscalYear     String     // "2025-26"
