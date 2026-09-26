@@ -41,10 +41,16 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       const session = await signIn(employeeId.trim(), pin.trim());
-      if (session.user.role === 'SIRDAR') {
+      if (session.user.role === 'SIRDAR' || session.user.role === 'MINE_MANAGER' || session.user.domain === 'safety') {
         router.replace('/safety/sirdar');
+      } else if (session.user.domain === 'environment') {
+        router.replace('/environment');
+      } else if (session.user.domain === 'labour') {
+        router.replace('/labour');
+      } else if (session.user.domain === 'production') {
+        router.replace('/production');
       } else {
-        Alert.alert('Success', `Welcome to MineGov AI Field Terminal!`);
+        router.replace('/(main)');
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid credentials';

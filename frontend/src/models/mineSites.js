@@ -53,7 +53,7 @@ export const mineSites = [
     id: 'kuya',
     name: 'Kuya Mega Opencast (BCCL)',
     region: 'Bastacolla Area IX, Dhanbad',
-    coordinates: [23.7380, 86.4350],
+    coordinates: [23.737356, 86.4302808],
     status: 'Live monitoring',
     type: 'Opencast Prime Coking',
     leases: 42,
@@ -63,4 +63,4 @@ export const mineSites = [
 
 // Dhanbad Jharia Coalfield Center Coordinates
 export const indiaCenter = [23.7500, 86.4150];
-export const mineCenter = [23.7428, 86.3456]; // Moonidih Deep Seam UG (Dhanbad)
+export const mineCenter = [23.737356, 86.4302808]; // Kuya Mega Opencast (Dhanbad)

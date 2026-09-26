@@ -102,8 +102,29 @@ export const api = {
     return res.json();
   },
 
-  async getMineWorkforce(collieryId) {
+  async getMineWorkforce(collieryId = "all") {
     const res = await fetch(`${API_BASE_URL}/mines/${collieryId}/workforce`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async getCollieriesList() {
+    const res = await fetch(`${API_BASE_URL}/mines/list`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async getMineSafetyNotices(collieryId = "all") {
+    const res = await fetch(`${API_BASE_URL}/mines/${collieryId}/safety-notices`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async getMineAfforestation(collieryId = "all") {
+    const res = await fetch(`${API_BASE_URL}/mines/${collieryId}/afforestation`, {
       headers: getAuthHeaders(),
     });
     return res.json();
@@ -122,6 +143,20 @@ export const api = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: formData,
+    });
+    return res.json();
+  },
+
+  // 6. Mobile Reported Hazards & Issues
+  async getReportedIssues(collieryId, severity) {
+    let url = `${API_BASE_URL}/issues`;
+    const params = new URLSearchParams();
+    if (collieryId) params.append("collieryId", collieryId);
+    if (severity) params.append("severity", severity);
+    if (params.toString()) url += `?${params.toString()}`;
+
+    const res = await fetch(url, {
+      headers: getAuthHeaders(),
     });
     return res.json();
   },

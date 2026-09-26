@@ -8,11 +8,20 @@ import MineManagerDashboard from "./pages/MineManager/MineManagerDashboard";
 import { RegionalDashboard } from "./pages/Reginal_Area/RegionalDashboard";
 import { SubsidiaryDashboard } from "./pages/Subsidary-dashboard";
 import CilDashboard from "./pages/cil-dashboard/cil";
+import DgmsDashboard from "./pages/DgmsDashboard/DgmsDashboard";
 
 function App() {
   // Read initial route from location hash
   const getInitialView = () => {
     const hash = window.location.hash;
+    if (
+      hash === "#demo_regulatory_dgms" ||
+      hash === "#demo_safety_head_officer" ||
+      hash === "#dgms_dashboard" ||
+      hash === "#demo_dgms"
+    ) {
+      return { view: "dgms_dashboard", hash };
+    }
     if (hash === "#demo_subsidiary" || hash === "#subsidiary_dashboard") {
       return { view: "subsidiary_dashboard", hash };
     }
@@ -52,7 +61,14 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === "#demo_subsidiary" || hash === "#subsidiary_dashboard") {
+      if (
+        hash === "#demo_regulatory_dgms" ||
+        hash === "#demo_safety_head_officer" ||
+        hash === "#dgms_dashboard" ||
+        hash === "#demo_dgms"
+      ) {
+        setRouteState({ view: "dgms_dashboard", hash });
+      } else if (hash === "#demo_subsidiary" || hash === "#subsidiary_dashboard") {
         setRouteState({ view: "subsidiary_dashboard", hash });
       } else if (hash === "#demo_mine_manager") {
         setRouteState({ view: "mineManager", hash });
@@ -115,7 +131,14 @@ function App() {
 
   const handleNavigateToDashboard = (redirectHash) => {
     window.location.hash = redirectHash;
-    if (redirectHash === "#demo_subsidiary" || redirectHash === "#subsidiary_dashboard") {
+    if (
+      redirectHash === "#demo_regulatory_dgms" ||
+      redirectHash === "#demo_safety_head_officer" ||
+      redirectHash === "#dgms_dashboard" ||
+      redirectHash === "#demo_dgms"
+    ) {
+      setRouteState({ view: "dgms_dashboard", hash: redirectHash });
+    } else if (redirectHash === "#demo_subsidiary" || redirectHash === "#subsidiary_dashboard") {
       setRouteState({ view: "subsidiary_dashboard", hash: redirectHash });
     } else if (redirectHash === "#demo_regional_area") {
       setRouteState({ view: "regional_dashboard", hash: redirectHash });
@@ -151,6 +174,15 @@ function App() {
     return (
       <CilDashboard
         onNavigateGateway={handleBackToGateway}
+        onBackToGateway={handleBackToGateway}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
+
+  if (routeState.view === "dgms_dashboard") {
+    return (
+      <DgmsDashboard
         onBackToGateway={handleBackToGateway}
         onBackToHome={handleBackToHome}
       />
