@@ -41,7 +41,14 @@ export default function TechnicalDashboardScreen() {
     : (Platform.OS === 'android' ? 12 : 8);
 
   const userName = session?.user.name || 'Sanjay Gupta';
-  const employeeId = session?.user.employeeId === 'TEST-TECH-001' ? 'E0012' : (session?.user.employeeId || 'E0012');
+  const employeeId = session?.user.employeeId || 'TEST-TECH-001';
+  const initials = userName
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase() || 'SG';
 
   const handlePeriodicChecksPress = () => {
     setSelectedCard('periodic');
@@ -106,7 +113,7 @@ export default function TechnicalDashboardScreen() {
             accessibilityRole="button"
             accessibilityLabel="User Profile"
           >
-            <Text style={styles.avatarInitials}>SG</Text>
+            <Text style={styles.avatarInitials}>{initials}</Text>
           </Pressable>
         </View>
       </View>

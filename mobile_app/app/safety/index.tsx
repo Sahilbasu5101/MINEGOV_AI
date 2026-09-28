@@ -7,10 +7,15 @@ export default function SafetyHome() {
   const router = useRouter();
 
   useEffect(() => {
-    if (session?.user.role === 'SIRDAR') {
-      router.replace('/safety/sirdar');
-    } else if (session?.user.role === 'TECHNICAL_COMPETENT_PERSON') {
+    if (session?.user.role === 'TECHNICAL_COMPETENT_PERSON') {
       router.replace('/safety/technical');
+    } else if (
+      session?.user.role === 'SIRDAR' ||
+      session?.user.role === 'MINE_MANAGER' ||
+      session?.user.role === 'SAFETY_INSPECTOR' ||
+      session?.user.domain === 'safety'
+    ) {
+      router.replace('/safety/sirdar');
     } else {
       router.replace('/(main)');
     }
