@@ -9,6 +9,8 @@ export default function SafetyHome() {
   useEffect(() => {
     if (session?.user.role === 'SIRDAR') {
       router.replace('/safety/sirdar');
+    } else if (session?.user.role === 'TECHNICAL_COMPETENT_PERSON') {
+      router.replace('/safety/technical');
     } else {
       router.replace('/(main)');
     }

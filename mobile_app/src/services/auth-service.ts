@@ -8,7 +8,7 @@ type DemoAccount = Omit<AuthenticatedUser, 'id' | 'domain'> & { pin: string };
 const fallbackAccounts: DemoAccount[] = [
   { employeeId: 'TEST-SIR-001', pin: '1234', name: 'Ramesh Kumar (Mining Sirdar)', role: 'SIRDAR' },
   { employeeId: 'TEST-SI-001', pin: '1234', name: 'Amit Verma (DGMS Safety Inspector)', role: 'SAFETY_INSPECTOR' },
-  { employeeId: 'TEST-TECH-001', pin: '1234', name: 'Vikash Singh (Competent Person Safety)', role: 'TECHNICAL_COMPETENT_PERSON' },
+  { employeeId: 'TEST-TECH-001', pin: '1234', name: 'Sanjay Gupta', role: 'TECHNICAL_COMPETENT_PERSON' },
   { employeeId: 'TEST-ENV-001', pin: '1234', name: 'Sudhanshu Sharma (Environment Officer)', role: 'ENVIRONMENT_OFFICER' },
   { employeeId: 'TEST-PROD-001', pin: '1234', name: 'Rohit Kumar (Production Officer)', role: 'PRODUCTION_OFFICER' },
   { employeeId: 'TEST-WEL-001', pin: '1234', name: 'Priya Kumari (Welfare Officer)', role: 'WELFARE_OFFICER' },

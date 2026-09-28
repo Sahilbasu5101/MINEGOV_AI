@@ -43,12 +43,8 @@ export default function LoginScreen() {
       const session = await signIn(employeeId.trim(), pin.trim());
       if (session.user.role === 'SIRDAR' || session.user.role === 'MINE_MANAGER' || session.user.domain === 'safety') {
         router.replace('/safety/sirdar');
-      } else if (session.user.domain === 'environment') {
-        router.replace('/environment');
-      } else if (session.user.domain === 'labour') {
-        router.replace('/labour');
-      } else if (session.user.domain === 'production') {
-        router.replace('/production');
+      } else if (session.user.role === 'TECHNICAL_COMPETENT_PERSON') {
+        router.replace('/safety/technical');
       } else {
         router.replace('/(main)');
       }
