@@ -41,10 +41,15 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       const session = await signIn(employeeId.trim(), pin.trim());
-      if (session.user.role === 'SIRDAR' || session.user.role === 'MINE_MANAGER' || session.user.domain === 'safety') {
-        router.replace('/safety/sirdar');
-      } else if (session.user.role === 'TECHNICAL_COMPETENT_PERSON') {
+      if (session.user.role === 'TECHNICAL_COMPETENT_PERSON') {
         router.replace('/safety/technical');
+      } else if (
+        session.user.role === 'SIRDAR' ||
+        session.user.role === 'MINE_MANAGER' ||
+        session.user.role === 'SAFETY_INSPECTOR' ||
+        session.user.domain === 'safety'
+      ) {
+        router.replace('/safety/sirdar');
       } else {
         router.replace('/(main)');
       }

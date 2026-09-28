@@ -55,7 +55,7 @@ export default function TechnicalProfileScreen() {
 
   // Authoritative Technical User values
   const userName = session?.user.name || 'Sanjay Gupta';
-  const employeeId = 'E0012';
+  const employeeId = session?.user.employeeId || 'TEST-TECH-001';
   const department = 'Technical Department';
   const role = 'Technical / Competent Person';
   const workLocation = 'Kusunda Coal Mine';
