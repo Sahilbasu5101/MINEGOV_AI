@@ -12,6 +12,7 @@ const fallbackAccounts: DemoAccount[] = [
   { employeeId: 'TEST-ENV-001', pin: '1234', name: 'Sudhanshu Sharma (Environment Officer)', role: 'ENVIRONMENT_OFFICER' },
   { employeeId: 'TEST-PROD-001', pin: '1234', name: 'Rohit Kumar (Production Officer)', role: 'PRODUCTION_OFFICER' },
   { employeeId: 'TEST-WEL-001', pin: '1234', name: 'Priya Kumari (Welfare Officer)', role: 'WELFARE_OFFICER' },
+  { employeeId: 'MINE-MGR-MOONIDIH', pin: '7492', name: 'R. K. Singh (Mine Manager First Class)', role: 'MINE_MANAGER' },
 ];
 
 export const authService = {

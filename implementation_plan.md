@@ -22,6 +22,7 @@
 13. [Top 15 System Design & Technical Interview Questions & Answers](#13-top-15-system-design--technical-interview-questions)
 14. [How to Prove to Interviewers That Backend Is 100% Real (Zero Mocking)](#14-how-to-prove-to-interviewers-that-backend-is-100-real-zero-mocking)
 15. [Mobile App Deep-Dive & Offline-First Engineering](#15-mobile-app-deep-dive--offline-first-engineering)
+16. [Master Seeded Datasets & Frontend Sub-View Integration (280+ Records)](#16-master-seeded-datasets--frontend-sub-view-integration)
 
 ---
 
@@ -254,9 +255,12 @@ AuditLedgerEntry (Immutable SHA-256 Hash Chain)
 ### 🗺️ 6. Regional Area & Mine Telemetry (`/api/v1/regional` & `/api/v1/mines`)
 - `GET /api/v1/regional/matrix`: Katras Area scorecards, environmental breaches, active pits.
 - `GET /api/v1/regional/gis-hotspots`: GeoJSON lat/long coordinates for Leaflet map overlay.
+- `GET /api/v1/mines/list`: Returns 108 active collieries across CIL with Cloudinary CAD hazard & ventilation maps.
 - `GET /api/v1/mines/:id/telemetry`: Recent SCADA sensor readings.
 - `POST /api/v1/mines/:id/telemetry`: SCADA ingestion with automated threshold alerting ($CH_4 > 1.25\%$).
-- `GET /api/v1/mines/:id/workforce`: PME compliance & biometric gate status.
+- `GET /api/v1/mines/:id/workforce`: 73 PME records with biometric turnstile lockout flags and Cloudinary Form 'O' medical certificates.
+- `GET /api/v1/mines/:id/safety-notices`: 72 DGMS statutory notices with CMR 2017 regulations, Section 22 orders, and Cloudinary forensic evidence photos.
+- `GET /api/v1/mines/:id/afforestation`: 70 Environmental bio-reclamation overburden dump records with Cloudinary drone orthomosaic surveys.
 
 ---
 
@@ -475,3 +479,50 @@ mobile_app/
    Camera captures damaged equipment or highwall cracks. When saved, `apiClient.uploadEvidence()` sends multipart `FormData` to `POST /api/v1/upload`. Multer streams to Cloudinary, and the returned HTTPS URL is saved in Neon DB via `POST /api/v1/issues`.
 3. **Daily Statutory Checklist Sync:**  
    Sirdar inspects 24 statutory safety items (PPE, ventilation, methane detectors, berm heights). Clicking *Submit / Next* transmits the entire report to `POST /api/v1/inspections`, syncing the report to the CIL Apex and DGMS web dashboards.
+
+---
+
+## 16. Master Seeded Datasets & Frontend Sub-View Integration (280+ Records)
+
+To make the platform realistic for BCCL (Dhanbad), Coal India Limited, and statutory regulators, **4 master datasets totaling 280+ records** were seeded into Neon PostgreSQL and wired directly to the React frontend views.
+
+### 📊 Dataset Breakdown
+
+| Dataset Name | Table Name | Total Seeded | Cloudinary Evidence Assets | Primary Live API Endpoint |
+|---|---|---|---|---|
+| **Colliery Blueprints & Schematics** | `Colliery` | **108 collieries** (70 master CIL) | Underground ventilation plans, evacuation routes, CAD blueprints | `GET /api/v1/mines/list` |
+| **DGMS Statutory Violations & Inquiries** | `SafetyNotice` | **72 notices** (70 master CMR) | Spot photogrammetric captures, roof bolting failure photos, uncertified equipment | `GET /api/v1/mines/:id/safety-notices` |
+| **Workforce Health & Biometric Lockout** | `WorkerRecord` | **73 personnel** (70 master BCCL) | Digitized statutory Form 'O' Periodic Medical Examination (PME) PDFs | `GET /api/v1/mines/:id/workforce` |
+| **Environmental Bio-Reclamation & Afforestation** | `AfforestationRecord` | **70 dump sites** | High-resolution drone orthomosaic surveys, contour terraces | `GET /api/v1/mines/:id/afforestation` |
+
+---
+
+### 🖥️ Frontend Sub-View Live Implementations
+
+#### 1. 🪪 Labour & Statutory Workforce Roster (`LabourDetailsView.jsx`)
+- **Neon DB Connection:** Fetches live records from `GET /api/v1/mines/:id/workforce` with offline cached fallback.
+- **Biometric Turnstile Lockout:**
+  - Automatically evaluates worker status under **CMR 2017 Regulation 29**.
+  - `UNFIT` workers are assigned **`🔒 LOCKED OUT` (Statutory Barred at Shaft Entrance)**.
+  - Medically certified workers display **`🟢 CLEARED`**.
+- **Clickable Form 'O' Cloudinary PDF:** Direct `📄 Form 'O' PDF ↗` button opening official medical fitness certificates in a new tab.
+- **Interactive Dossier:** Selecting any row renders the worker's complete medical history, MVTR-1966 vocational training validity, and colliery assignment.
+
+#### 2. 🛡️ DGMS Statutory Safety & Inquiries Desk (`SafetyDetailsView.jsx`)
+- **Neon DB Connection:** Fetches live records from `GET /api/v1/mines/:id/safety-notices`.
+- **CMR 2017 Regulatory Directives:** Real statutory breaches including CMR Reg 152 (ventilation), Reg 123 (strata support), Section 22 Stop-Work orders, and toxic gas leakages.
+- **Cloudinary Forensic Photo Modal:** Clicking `📷 View Photo` opens a full-screen forensic inspection capture delivered by Cloudinary CDN.
+- **Manager Action Controls:** Form VI work rectification plan submission, emergency crew dispatch, and Subsidiary CMD escalation triggers.
+
+#### 3. 🌲 Environmental Compliance & Ecological Restoration (`EnvironmentDetailsView.jsx`)
+- **Neon DB Connection:** Fetches live records from `GET /api/v1/mines/:id/afforestation`.
+- **Dual Tab Architecture:**
+  - **Tab 1 (Bio-Reclamation & Drone Surveys):** 70 overburden dumps with target vs achieved hectares, canopy density index, and **Cloudinary Drone Orthomosaic Surveys** (`🛰️ Drone Photo`).
+  - **Tab 2 (Continuous OCEMS SCADA Telemetry):** CPCB live sensor monitoring (AQI, PM10, Dust sprinklers, Noise, Water discharge pH).
+
+#### 4. 🗺️ Mine Map & Ventilation Blueprints (`MineMapView.jsx`)
+- **Neon DB Connection:** Fetches all 108 collieries from `GET /api/v1/mines/list`.
+- **Dual Mode Switcher:**
+  - **📐 Statutory Blueprint (CAD):** Displays high-resolution Cloudinary underground ventilation schematics, evacuation routes, and shaft layouts (`hazardMapUrl`).
+  - **🗺️ GIS SCADA Map:** Interactive Leaflet GIS map with machinery tracking, risk zones, and sensor stations.
+  - **Dynamic Colliery Selector:** Dropdown seamlessly switches between Moonidih Deep Seam, Gaslitand Underground, Kusunda Opencast, Gevra Mega Pit, etc.
